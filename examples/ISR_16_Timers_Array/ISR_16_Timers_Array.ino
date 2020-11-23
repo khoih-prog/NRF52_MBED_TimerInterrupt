@@ -276,7 +276,7 @@ void simpleTimerDoingSomething2s()
 
   unsigned long currMillis = millis();
 
-  Serial.printf("SimpleTimer : %ds, ms = %lu, Dms : %lu\n", SIMPLE_TIMER_MS / 1000, currMillis, currMillis - previousMillis);
+  Serial.printf("SimpleTimer : %lus, ms = %lu, Dms : %lu\n", SIMPLE_TIMER_MS / 1000, currMillis, currMillis - previousMillis);
 
   for (int i = 0; i < NUMBER_ISR_TIMERS; i++)
   {
