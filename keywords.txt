@@ -1,0 +1,68 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+NRF52_MBED_TimerInterrupt	KEYWORD1
+NRF52_MBED_Timer	KEYWORD1
+NRF52_MBED_ISRTimer KEYWORD1
+NRF52_MBED_ISR_Timer KEYWORD1
+NRF52_MBED_TimerNumber KEYWORD1
+timerCallback KEYWORD1
+timerCallback_p KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+##############################
+# Class NRF52_MBED_TimerInterrupt
+##############################
+
+setFrequency	KEYWORD2
+setInterval	KEYWORD2
+attachInterrupt	KEYWORD2
+attachInterruptInterval	KEYWORD2
+detachInterrupt	KEYWORD2
+disableTimer	KEYWORD2
+reattachInterrupt	KEYWORD2
+enableTimer	KEYWORD2
+stopTimer	KEYWORD2
+restartTimer	KEYWORD2
+getCallback KEYWORD2
+getTimerIRQn  KEYWORD2
+
+##############################
+# Class NRF52_MBED_ISR_Timer
+##############################
+
+run KEYWORD2
+setTimeout  KEYWORD2
+setTimer  KEYWORD2
+changeInterval  KEYWORD2
+deleteTimer KEYWORD2
+restartTimer  KEYWORD2
+isEnabled KEYWORD2
+enable  KEYWORD2
+disable KEYWORD2
+enableAll KEYWORD2
+disableAll  KEYWORD2
+toggle  KEYWORD2
+getNumTimers  KEYWORD2
+getNumAvailableTimers KEYWORD2
+
+##############################
+# Global Functions
+##############################
+
+TIMER1_IRQHandler KEYWORD2
+TIMER3_IRQHandler KEYWORD2
+TIMER4_IRQHandler KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+NRF_TIMER_1 LITERAL1
+NRF_TIMER_3 LITERAL1
+NRF_TIMER_4 LITERAL1
+NRF_MAX_TIMER LITERAL1
