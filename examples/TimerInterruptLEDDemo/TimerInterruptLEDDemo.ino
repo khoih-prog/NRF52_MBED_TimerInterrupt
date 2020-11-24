@@ -19,11 +19,12 @@
    Based on BlynkTimer.h
    Author: Volodymyr Shymanskyy
 
-   Version: 1.0.1
+   Version: 1.0.2
 
    Version Modified By   Date      Comments
    ------- -----------  ---------- -----------
    1.0.1   K Hoang      22/11/2020 Initial coding and sync with NRF52_TimerInterrupt
+   1.0.2   K Hoang      23/11/2020 Add and optimize examples
 *****************************************************************************************************************************/
 
 /*

@@ -106,31 +106,58 @@ void TimerHandler(void)
   }
 }
 
+/////////////////////////////////////////////////
+
 #define NUMBER_ISR_TIMERS         16
 
 typedef void (*irqCallback)  (void);
 
-volatile unsigned long deltaMillis    [NUMBER_ISR_TIMERS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-volatile unsigned long previousMillis [NUMBER_ISR_TIMERS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+/////////////////////////////////////////////////
 
-// You can assign any interval for any timer here, in milliseconds
-uint32_t TimerInterval[NUMBER_ISR_TIMERS] =
-{
-  5000L,  10000L,  15000L,  20000L,  25000L,  30000L,  35000L,  40000L,
-  45000L, 50000L,  55000L,  60000L,  65000L,  70000L,  75000L,  80000L
-};
+#define USE_COMPLEX_STRUCT      false
 
-void doingSomething(int index)
-{
-unsigned long currentMillis  = millis();
+#if USE_COMPLEX_STRUCT
 
-deltaMillis[index]    = currentMillis - previousMillis[index];
-previousMillis[index] = currentMillis;
-}
+  typedef struct 
+  {
+    irqCallback   irqCallbackFunc;
+    uint32_t      TimerInterval;
+    unsigned long deltaMillis;
+    unsigned long previousMillis;
+  } ISRTimerData;
+  
+  // In NRF52, avoid doing something fancy in ISR, for example Serial.print()
+  // The pure simple Serial.prints here are just for demonstration and testing. Must be eliminate in working environment
+  // Or you can get this run-time error / crash
+  
+  void doingSomething(int index);
 
-// In NRF52, avoid doing something fancy in ISR, for example Serial.print()
-// The pure simple Serial.prints here are just for demonstration and testing. Must be eliminate in working environment
-// Or you can get this run-time error / crash
+#else
+
+  volatile unsigned long deltaMillis    [NUMBER_ISR_TIMERS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  volatile unsigned long previousMillis [NUMBER_ISR_TIMERS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  
+  // You can assign any interval for any timer here, in milliseconds
+  uint32_t TimerInterval[NUMBER_ISR_TIMERS] =
+  {
+    5000L,  10000L,  15000L,  20000L,  25000L,  30000L,  35000L,  40000L,
+    45000L, 50000L,  55000L,  60000L,  65000L,  70000L,  75000L,  80000L
+  };
+  
+  void doingSomething(int index)
+  {
+    unsigned long currentMillis  = millis();
+    
+    deltaMillis[index]    = currentMillis - previousMillis[index];
+    previousMillis[index] = currentMillis;
+  }
+
+#endif
+
+////////////////////////////////////
+// Shared
+////////////////////////////////////
+
 void doingSomething0()
 {
   doingSomething(0);
@@ -211,16 +238,49 @@ void doingSomething15()
   doingSomething(15);
 }
 
-irqCallback irqCallbackFunc[NUMBER_ISR_TIMERS] =
-{
-  doingSomething0,  doingSomething1,  doingSomething2,  doingSomething3,
-  doingSomething4,  doingSomething5,  doingSomething6,  doingSomething7,
-  doingSomething8,  doingSomething9,  doingSomething10, doingSomething11,
-  doingSomething12, doingSomething13, doingSomething14, doingSomething15
-};
+#if USE_COMPLEX_STRUCT
 
-////////////////////////////////////////////////
+  ISRTimerData curISRTimerData[NUMBER_ISR_TIMERS] =
+  {
+    //irqCallbackFunc, TimerInterval, deltaMillis, previousMillis
+    { doingSomething0,    5000L, 0, 0 },
+    { doingSomething1,   10000L, 0, 0 },
+    { doingSomething2,   15000L, 0, 0 },
+    { doingSomething3,   20000L, 0, 0 },
+    { doingSomething4,   25000L, 0, 0 },
+    { doingSomething5,   30000L, 0, 0 },
+    { doingSomething6,   35000L, 0, 0 },
+    { doingSomething7,   40000L, 0, 0 },
+    { doingSomething8,   45000L, 0, 0 },
+    { doingSomething9,   50000L, 0, 0 },
+    { doingSomething10,  55000L, 0, 0 },
+    { doingSomething11,  60000L, 0, 0 },
+    { doingSomething12,  65000L, 0, 0 },
+    { doingSomething13,  70000L, 0, 0 },
+    { doingSomething14,  75000L, 0, 0 },
+    { doingSomething15,  80000L, 0, 0 }
+  };
+  
+  void doingSomething(int index)
+  {
+    unsigned long currentMillis  = millis();
+    
+    curISRTimerData[index].deltaMillis    = currentMillis - curISRTimerData[index].previousMillis;
+    curISRTimerData[index].previousMillis = currentMillis;
+  }
 
+#else
+
+  irqCallback irqCallbackFunc[NUMBER_ISR_TIMERS] =
+  {
+    doingSomething0,  doingSomething1,  doingSomething2,  doingSomething3,
+    doingSomething4,  doingSomething5,  doingSomething6,  doingSomething7,
+    doingSomething8,  doingSomething9,  doingSomething10, doingSomething11,
+    doingSomething12, doingSomething13, doingSomething14, doingSomething15
+  };
+
+#endif
+///////////////////////////////////////////
 
 #define SIMPLE_TIMER_MS        2000L
 
@@ -241,7 +301,11 @@ void simpleTimerDoingSomething2s()
 
   for (int i = 0; i < NUMBER_ISR_TIMERS; i++)
   {
+#if USE_COMPLEX_STRUCT    
+    Serial.printf("Timer : %d, programmed : %lu, actual : %lu\n", i, curISRTimerData[i].TimerInterval, curISRTimerData[i].deltaMillis);
+#else
     Serial.printf("Timer : %d, programmed : %lu, actual : %lu\n", i, TimerInterval[i], deltaMillis[i]);
+#endif    
   }
 
   previousMillis = currMillis;
@@ -254,7 +318,7 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
 
-  Serial.printf("\nStarting ISR_16_Timers_Array on %s\n", BOARD_NAME);
+  Serial.printf("\nStarting ISR_16_Timers_Array_Complex on %s\n", BOARD_NAME);
   Serial.printf("Version : v%s\n", NRF52_MBED_TIMER_INTERRUPT_VERSION);
 
   // Interval in microsecs
@@ -270,8 +334,13 @@ void setup()
   // You can use up to 16 timer for each ISR_Timer
   for (int i = 0; i < NUMBER_ISR_TIMERS; i++)
   {
+#if USE_COMPLEX_STRUCT
+    curISRTimerData[i].previousMillis = startMillis;
+    ISR_Timer.setInterval(curISRTimerData[i].TimerInterval, curISRTimerData[i].irqCallbackFunc);
+#else
     previousMillis[i] = startMillis;
     ISR_Timer.setInterval(TimerInterval[i], irqCallbackFunc[i]);
+#endif    
   }
 
   // You need this timer for non-critical tasks. Avoid abusing ISR if not absolutely necessary.

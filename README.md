@@ -44,6 +44,10 @@ The catch is **your function is now part of an ISR (Interrupt Service Routine), 
 ---
 ---
 
+### Releases v1.0.2
+
+1. Add example [**ISR_16_Timers_Array_Complex**](examples/ISR_16_Timers_Array_Complex) and optimize example [**ISR_16_Timers_Array**](examples/ISR_16_Timers_Array)
+
 ### Releases v1.0.1
 
 1. Initial coding for Nano-33-BLE and sync with [**NRF52_TimerInterrupt Library**](https://github.com/khoih-prog/NRF52_TimerInterrupt)
@@ -314,15 +318,16 @@ void setup()
 
  1. [Argument_None](examples/Argument_None)
  2. [ISR_16_Timers_Array](examples/ISR_16_Timers_Array)
- 3. [SwitchDebounce](examples/SwitchDebounce)
- 4. [TimerInterruptTest](examples/TimerInterruptTest)
- 5. [TimerInterruptLEDDemo](examples/TimerInterruptLEDDemo)
+ 3. [ISR_16_Timers_Array_Complex](examples/ISR_16_Timers_Array_Complex)
+ 4. [SwitchDebounce](examples/SwitchDebounce)
+ 5. [TimerInterruptTest](examples/TimerInterruptTest)
+ 6. [TimerInterruptLEDDemo](examples/TimerInterruptLEDDemo)
 
 
 ---
 ---
 
-### Example [ISR_16_Timers_Array](examples/ISR_16_Timers_Array)
+### Example [ISR_16_Timers_Array_Complex](examples/ISR_16_Timers_Array_Complex)
 
 ```
 #if !( ARDUINO_ARCH_NRF52840 && TARGET_NAME == ARDUINO_NANO33BLE )
@@ -385,161 +390,181 @@ void TimerHandler(void)
   }
 }
 
+/////////////////////////////////////////////////
+
 #define NUMBER_ISR_TIMERS         16
-
-// You can assign any interval for any timer here, in milliseconds
-uint32_t TimerInterval[NUMBER_ISR_TIMERS] =
-{
-  5000L,  10000L,  15000L,  20000L,  25000L,  30000L,  35000L,  40000L,
-  45000L, 50000L,  55000L,  60000L,  65000L,  70000L,  75000L,  80000L
-};
-
-volatile unsigned long deltaMillis    [NUMBER_ISR_TIMERS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-volatile unsigned long previousMillis [NUMBER_ISR_TIMERS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 typedef void (*irqCallback)  (void);
 
-// In NRF52, avoid doing something fancy in ISR, for example Serial.print()
-// The pure simple Serial.prints here are just for demonstration and testing. Must be eliminate in working environment
-// Or you can get this run-time error / crash
+/////////////////////////////////////////////////
+
+#define USE_COMPLEX_STRUCT      false
+
+#if USE_COMPLEX_STRUCT
+
+  typedef struct 
+  {
+    irqCallback   irqCallbackFunc;
+    uint32_t      TimerInterval;
+    unsigned long deltaMillis;
+    unsigned long previousMillis;
+  } ISRTimerData;
+  
+  // In NRF52, avoid doing something fancy in ISR, for example Serial.print()
+  // The pure simple Serial.prints here are just for demonstration and testing. Must be eliminate in working environment
+  // Or you can get this run-time error / crash
+  
+  void doingSomething(int index);
+
+#else
+
+  volatile unsigned long deltaMillis    [NUMBER_ISR_TIMERS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  volatile unsigned long previousMillis [NUMBER_ISR_TIMERS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+  
+  // You can assign any interval for any timer here, in milliseconds
+  uint32_t TimerInterval[NUMBER_ISR_TIMERS] =
+  {
+    5000L,  10000L,  15000L,  20000L,  25000L,  30000L,  35000L,  40000L,
+    45000L, 50000L,  55000L,  60000L,  65000L,  70000L,  75000L,  80000L
+  };
+  
+  void doingSomething(int index)
+  {
+    unsigned long currentMillis  = millis();
+    
+    deltaMillis[index]    = currentMillis - previousMillis[index];
+    previousMillis[index] = currentMillis;
+  }
+
+#endif
+
+////////////////////////////////////
+// Shared
+////////////////////////////////////
+
 void doingSomething0()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[0]    = currentMillis - previousMillis[0];
-  previousMillis[0] = currentMillis;
+  doingSomething(0);
 }
 
 void doingSomething1()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[1]    = currentMillis - previousMillis[1];
-  previousMillis[1] = currentMillis;
+  doingSomething(1);
 }
 
 void doingSomething2()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[2]    = currentMillis - previousMillis[2];
-  previousMillis[2] = currentMillis;
+  doingSomething(2);
 }
 
 void doingSomething3()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[3]    = currentMillis - previousMillis[3];
-  previousMillis[3] = currentMillis;
+  doingSomething(3);
 }
 
 void doingSomething4()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[4]    = currentMillis - previousMillis[4];
-  previousMillis[4] = currentMillis;
+  doingSomething(4);
 }
 
 void doingSomething5()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[5]    = currentMillis - previousMillis[5];
-  previousMillis[5] = currentMillis;
+  doingSomething(5);
 }
 
 void doingSomething6()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[6]    = currentMillis - previousMillis[6];
-  previousMillis[6] = currentMillis;
+  doingSomething(6);
 }
 
 void doingSomething7()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[7]    = currentMillis - previousMillis[7];
-  previousMillis[7] = currentMillis;
+  doingSomething(7);
 }
 
 void doingSomething8()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[8]    = currentMillis - previousMillis[8];
-  previousMillis[8] = currentMillis;
+  doingSomething(8);
 }
 
 void doingSomething9()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[9]    = currentMillis - previousMillis[9];
-  previousMillis[9] = currentMillis;
+  doingSomething(9);
 }
 
 void doingSomething10()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[10]    = currentMillis - previousMillis[10];
-  previousMillis[10] = currentMillis;
+  doingSomething(10);
 }
 
 void doingSomething11()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[11]    = currentMillis - previousMillis[11];
-  previousMillis[11] = currentMillis;
+  doingSomething(11);
 }
 
 void doingSomething12()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[12]    = currentMillis - previousMillis[12];
-  previousMillis[12] = currentMillis;
+  doingSomething(12);
 }
 
 void doingSomething13()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[13]    = currentMillis - previousMillis[13];
-  previousMillis[13] = currentMillis;
+  doingSomething(13);
 }
 
 void doingSomething14()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[14]    = currentMillis - previousMillis[14];
-  previousMillis[14] = currentMillis;
+  doingSomething(14);
 }
 
 void doingSomething15()
 {
-  unsigned long currentMillis  = millis();
-  
-  deltaMillis[15]    = currentMillis - previousMillis[15];
-  previousMillis[15] = currentMillis;
+  doingSomething(15);
 }
 
-irqCallback irqCallbackFunc[NUMBER_ISR_TIMERS] =
-{
-  doingSomething0,  doingSomething1,  doingSomething2,  doingSomething3,
-  doingSomething4,  doingSomething5,  doingSomething6,  doingSomething7,
-  doingSomething8,  doingSomething9,  doingSomething10, doingSomething11,
-  doingSomething12, doingSomething13, doingSomething14, doingSomething15
-};
+#if USE_COMPLEX_STRUCT
 
-////////////////////////////////////////////////
+  ISRTimerData curISRTimerData[NUMBER_ISR_TIMERS] =
+  {
+    //irqCallbackFunc, TimerInterval, deltaMillis, previousMillis
+    { doingSomething0,    5000L, 0, 0 },
+    { doingSomething1,   10000L, 0, 0 },
+    { doingSomething2,   15000L, 0, 0 },
+    { doingSomething3,   20000L, 0, 0 },
+    { doingSomething4,   25000L, 0, 0 },
+    { doingSomething5,   30000L, 0, 0 },
+    { doingSomething6,   35000L, 0, 0 },
+    { doingSomething7,   40000L, 0, 0 },
+    { doingSomething8,   45000L, 0, 0 },
+    { doingSomething9,   50000L, 0, 0 },
+    { doingSomething10,  55000L, 0, 0 },
+    { doingSomething11,  60000L, 0, 0 },
+    { doingSomething12,  65000L, 0, 0 },
+    { doingSomething13,  70000L, 0, 0 },
+    { doingSomething14,  75000L, 0, 0 },
+    { doingSomething15,  80000L, 0, 0 }
+  };
+  
+  void doingSomething(int index)
+  {
+    unsigned long currentMillis  = millis();
+    
+    curISRTimerData[index].deltaMillis    = currentMillis - curISRTimerData[index].previousMillis;
+    curISRTimerData[index].previousMillis = currentMillis;
+  }
 
+#else
+
+  irqCallback irqCallbackFunc[NUMBER_ISR_TIMERS] =
+  {
+    doingSomething0,  doingSomething1,  doingSomething2,  doingSomething3,
+    doingSomething4,  doingSomething5,  doingSomething6,  doingSomething7,
+    doingSomething8,  doingSomething9,  doingSomething10, doingSomething11,
+    doingSomething12, doingSomething13, doingSomething14, doingSomething15
+  };
+
+#endif
+///////////////////////////////////////////
 
 #define SIMPLE_TIMER_MS        2000L
 
@@ -556,11 +581,15 @@ void simpleTimerDoingSomething2s()
 
   unsigned long currMillis = millis();
 
-  Serial.printf("SimpleTimer : %ds, ms = %lu, Dms : %lu\n", SIMPLE_TIMER_MS / 1000, currMillis, currMillis - previousMillis);
+  Serial.printf("SimpleTimer : %lus, ms = %lu, Dms : %lu\n", SIMPLE_TIMER_MS / 1000, currMillis, currMillis - previousMillis);
 
   for (int i = 0; i < NUMBER_ISR_TIMERS; i++)
   {
+#if USE_COMPLEX_STRUCT    
+    Serial.printf("Timer : %d, programmed : %lu, actual : %lu\n", i, curISRTimerData[i].TimerInterval, curISRTimerData[i].deltaMillis);
+#else
     Serial.printf("Timer : %d, programmed : %lu, actual : %lu\n", i, TimerInterval[i], deltaMillis[i]);
+#endif    
   }
 
   previousMillis = currMillis;
@@ -573,7 +602,7 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
 
-  Serial.printf("\nStarting ISR_16_Timers_Array on %s\n", BOARD_NAME);
+  Serial.printf("\nStarting ISR_16_Timers_Array_Complex on %s\n", BOARD_NAME);
   Serial.printf("Version : v%s\n", NRF52_MBED_TIMER_INTERRUPT_VERSION);
 
   // Interval in microsecs
@@ -589,8 +618,13 @@ void setup()
   // You can use up to 16 timer for each ISR_Timer
   for (int i = 0; i < NUMBER_ISR_TIMERS; i++)
   {
+#if USE_COMPLEX_STRUCT
+    curISRTimerData[i].previousMillis = startMillis;
+    ISR_Timer.setInterval(curISRTimerData[i].TimerInterval, curISRTimerData[i].irqCallbackFunc);
+#else
     previousMillis[i] = startMillis;
     ISR_Timer.setInterval(TimerInterval[i], irqCallbackFunc[i]);
+#endif    
   }
 
   // You need this timer for non-critical tasks. Avoid abusing ISR if not absolutely necessary.
@@ -617,13 +651,13 @@ void loop()
 
 ### Debug Terminal Output Samples
 
-1. The following is the sample terminal output when running example [ISR_16_Timers_Array](examples/ISR_16_Timers_Array) on **Nano 33 BLE** to demonstrate the accuracy of ISR Hardware Timer, **especially when system is very busy**.  The ISR timer is **programmed for 2s, is activated exactly after 2.000s !!!**
+1. The following is the sample terminal output when running example [ISR_16_Timers_Array_Complex](examples/ISR_16_Timers_Array_Complex) on **Nano 33 BLE** to demonstrate the accuracy of ISR Hardware Timer, **especially when system is very busy**.  The ISR timer is **programmed for 2s, is activated exactly after 2.000s !!!**
 
 While software timer, **programmed for 2s, is activated after more than 3.000s in loop().
 
 ```
-Starting ISR_16_Timers_Array on Nano 33 BLE
-Version : 1.0.1
+Starting ISR_16_Timers_Array_Complex on Nano 33 BLE
+Version : 1.0.2
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 10000
 Starting  ITimer OK, millis() = 714
@@ -1095,7 +1129,7 @@ Timer : 15, programmed : 80000, actual : 80009
 
 ```
 Starting TimerInterruptTest on Nano 33 BLE
-Version : v1.0.1
+Version : v1.0.2
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 1000000
 Starting  ITimer0 OK, millis() = 5660
@@ -1126,7 +1160,7 @@ Start ITimer0, millis() = 60680
 
 ```
 Starting Argument_None on Nano 33 BLE
-Version : 1.0.1
+Version : 1.0.2
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER1
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 500000
 Starting  ITimer0 OK, millis() = 1519
@@ -1155,7 +1189,7 @@ In this example, 16 independent ISR Timers are used, yet utilized just one Hardw
 
 ```
 Starting ISR_16_Timers_Array on NRF52840_ITSYBITSY
-Version : 1.0.1
+Version : 1.0.2
 CPU Frequency = 64 MHz
 NRF52TimerInterrupt: F_CPU (MHz) = 64, Timer = NRF_TIMER2
 NRF52TimerInterrupt: _fre = 1000000.00, _count = 1000
@@ -1196,6 +1230,10 @@ simpleTimer2s:Dms=10004
 ```
 ---
 ---
+
+### Releases v1.0.2
+
+1. Add example [ISR_16_Timers_Array_Complex](examples/ISR_16_Timers_Array_Complex) and optimize example [ISR_16_Timers_Array](examples/ISR_16_Timers_Array)
 
 ### Releases v1.0.1
 
