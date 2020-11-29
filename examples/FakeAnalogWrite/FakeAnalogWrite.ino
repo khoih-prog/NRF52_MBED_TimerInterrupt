@@ -236,7 +236,7 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
         curISRTimerData[i].PWM_PremapValue = localValue;
         
         // Mapping to corect value
-        if ( ( localValue == 0) || ( localValue == MAX_PWM_VALUE) )
+        if ( ( localValue == 0) || ( localValue == MAX_PWM_VALUE - 1) )
         {
           // Keep MAX_PWM_VALUE
           curISRTimerData[i].PWM_Value = localValue;
@@ -288,7 +288,7 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
       // Mapping to corect value
       localValue = (value < MAX_PWM_VALUE) ? value : MAX_PWM_VALUE;
 
-      if ( ( localValue == 0) || ( localValue == MAX_PWM_VALUE) )
+      if ( ( localValue == 0) || ( localValue == MAX_PWM_VALUE - 1) )
       {
         // Keep MAX_PWM_VALUE
         curISRTimerData[i].PWM_Value = localValue;
