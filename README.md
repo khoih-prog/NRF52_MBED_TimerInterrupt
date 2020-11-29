@@ -324,7 +324,7 @@ void setup()
  4. [SwitchDebounce](examples/SwitchDebounce)
  5. [TimerInterruptTest](examples/TimerInterruptTest)
  6. [TimerInterruptLEDDemo](examples/TimerInterruptLEDDemo)
-
+ 7. [FakeAnalogWrite](examples/FakeAnalogWrite)
 
 ---
 ---
@@ -1182,54 +1182,110 @@ Time = 100010, Timer0Count = 197, Timer1Count = 49
 
 ```
 
-4. The following is the sample terminal output when running example [ISR_16_Timers_Array](examples/ISR_16_Timers_Array) on **Adafruit NRF52840_ITSYBITSY** to demonstrate the accuracy of ISR Hardware Timer, **especially when system is very busy or blocked**. The 16 independent ISR timers are **programmed to be activated repetitively after certain intervals, is activated exactly after that programmed interval !!!**
+---
 
-While software timer, **programmed for 2s, is activated after 10.000s in loop()!!!**.
-
-In this example, 16 independent ISR Timers are used, yet utilized just one Hardware Timer. The Timer Intervals and Function Pointers are stored in arrays to facilitate the code modification.
-
+4. The following is the sample terminal output when running example [FakeAnalogWrite](examples/FakeAnalogWrite) on **Nano 33 BLE** to demonstrate the usage of PWWM fakeAnalogWrite to simulate PWM analogWrite, but being able to write to many more pins.
 
 ```
-Starting ISR_16_Timers_Array on NRF52840_ITSYBITSY
-Version : 1.0.2
-CPU Frequency = 64 MHz
-NRF52TimerInterrupt: F_CPU (MHz) = 64, Timer = NRF_TIMER2
-NRF52TimerInterrupt: _fre = 1000000.00, _count = 1000
-Starting  ITimer OK, millis() = 915
-5s: Delta ms = 5000, ms = 5915
-simpleTimer2s:Dms=10001
-5s: Delta ms = 5001, ms = 10916
-5s: Delta ms = 4999, ms = 15915
-5s: Delta ms = 5000, ms = 20915
-simpleTimer2s:Dms=10003
-5s: Delta ms = 5000, ms = 25915
-5s: Delta ms = 5000, ms = 30915
-simpleTimer2s:Dms=10000
-5s: Delta ms = 5000, ms = 35915
-5s: Delta ms = 5000, ms = 40915
-simpleTimer2s:Dms=10000
-5s: Delta ms = 5000, ms = 45915
-5s: Delta ms = 5000, ms = 50915
-simpleTimer2s:Dms=10004
-5s: Delta ms = 5000, ms = 55915
-5s: Delta ms = 5000, ms = 60915
-simpleTimer2s:Dms=10001
-5s: Delta ms = 5000, ms = 65915
-5s: Delta ms = 5000, ms = 70915
-simpleTimer2s:Dms=10005
-5s: Delta ms = 5000, ms = 75915
-5s: Delta ms = 5000, ms = 80915
-simpleTimer2s:Dms=10004
-5s: Delta ms = 5000, ms = 85915
-5s: Delta ms = 5000, ms = 90915
-simpleTimer2s:Dms=10000
-5s: Delta ms = 5001, ms = 95916
-5s: Delta ms = 4999, ms = 100915
-simpleTimer2s:Dms=10004
-5s: Delta ms = 5000, ms = 105915
-5s: Delta ms = 5000, ms = 110915
-simpleTimer2s:Dms=10004
+
+Starting FakeAnalogWrite on Nano 33 BLE
+Version : v1.0.2
+NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
+NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 100
+Starting  ITimer OK, millis() = 1811
+Add index 0, pin = 2, input PWM_Value=0, mapped PWM_Value= 0
+Add index 1, pin = 3, input PWM_Value=0, mapped PWM_Value= 0
+Add index 2, pin = 4, input PWM_Value=0, mapped PWM_Value= 0
+Add index 3, pin = 5, input PWM_Value=0, mapped PWM_Value= 0
+Add index 4, pin = 6, input PWM_Value=0, mapped PWM_Value= 0
+Add index 5, pin = 7, input PWM_Value=0, mapped PWM_Value= 0
+Add index 6, pin = 8, input PWM_Value=0, mapped PWM_Value= 0
+Add index 7, pin = 9, input PWM_Value=0, mapped PWM_Value= 0
+Test PWM_Value = 0, max = 255
+Update index 0, pin = 2, input PWM_Value=5, mapped PWM_Value= 14
+Update index 1, pin = 3, input PWM_Value=5, mapped PWM_Value= 14
+Update index 2, pin = 4, input PWM_Value=5, mapped PWM_Value= 14
+Update index 3, pin = 5, input PWM_Value=5, mapped PWM_Value= 14
+Update index 4, pin = 6, input PWM_Value=5, mapped PWM_Value= 14
+Update index 5, pin = 7, input PWM_Value=5, mapped PWM_Value= 14
+Update index 6, pin = 8, input PWM_Value=5, mapped PWM_Value= 14
+Update index 7, pin = 9, input PWM_Value=5, mapped PWM_Value= 14
+Test PWM_Value = 5, max = 255
+Update index 0, pin = 2, input PWM_Value=10, mapped PWM_Value= 27
+Update index 1, pin = 3, input PWM_Value=10, mapped PWM_Value= 27
+Update index 2, pin = 4, input PWM_Value=10, mapped PWM_Value= 27
+Update index 3, pin = 5, input PWM_Value=10, mapped PWM_Value= 27
+Update index 4, pin = 6, input PWM_Value=10, mapped PWM_Value= 27
+Update index 5, pin = 7, input PWM_Value=10, mapped PWM_Value= 27
+Update index 6, pin = 8, input PWM_Value=10, mapped PWM_Value= 27
+Update index 7, pin = 9, input PWM_Value=10, mapped PWM_Value= 27
+Test PWM_Value = 10, max = 255
+Update index 0, pin = 2, input PWM_Value=15, mapped PWM_Value= 39
+Update index 1, pin = 3, input PWM_Value=15, mapped PWM_Value= 39
+Update index 2, pin = 4, input PWM_Value=15, mapped PWM_Value= 39
+Update index 3, pin = 5, input PWM_Value=15, mapped PWM_Value= 39
+Update index 4, pin = 6, input PWM_Value=15, mapped PWM_Value= 39
+Update index 5, pin = 7, input PWM_Value=15, mapped PWM_Value= 39
+Update index 6, pin = 8, input PWM_Value=15, mapped PWM_Value= 39
+Update index 7, pin = 9, input PWM_Value=15, mapped PWM_Value= 39
+Test PWM_Value = 15, max = 255
+Update index 0, pin = 2, input PWM_Value=20, mapped PWM_Value= 49
+Update index 1, pin = 3, input PWM_Value=20, mapped PWM_Value= 49
+Update index 2, pin = 4, input PWM_Value=20, mapped PWM_Value= 49
+Update index 3, pin = 5, input PWM_Value=20, mapped PWM_Value= 49
+Update index 4, pin = 6, input PWM_Value=20, mapped PWM_Value= 49
+Update index 5, pin = 7, input PWM_Value=20, mapped PWM_Value= 49
+Update index 6, pin = 8, input PWM_Value=20, mapped PWM_Value= 49
+Update index 7, pin = 9, input PWM_Value=20, mapped PWM_Value= 49
+Test PWM_Value = 20, max = 255
+...
+Update index 0, pin = 2, input PWM_Value=100, mapped PWM_Value= 118
+Update index 1, pin = 3, input PWM_Value=100, mapped PWM_Value= 118
+Update index 2, pin = 4, input PWM_Value=100, mapped PWM_Value= 118
+Update index 3, pin = 5, input PWM_Value=100, mapped PWM_Value= 118
+Update index 4, pin = 6, input PWM_Value=100, mapped PWM_Value= 118
+Update index 5, pin = 7, input PWM_Value=100, mapped PWM_Value= 118
+Update index 6, pin = 8, input PWM_Value=100, mapped PWM_Value= 118
+Update index 7, pin = 9, input PWM_Value=100, mapped PWM_Value= 118
+Test PWM_Value = 100, max = 255
+Update index 0, pin = 2, input PWM_Value=105, mapped PWM_Value= 120
+Update index 1, pin = 3, input PWM_Value=105, mapped PWM_Value= 120
+Update index 2, pin = 4, input PWM_Value=105, mapped PWM_Value= 120
+Update index 3, pin = 5, input PWM_Value=105, mapped PWM_Value= 120
+Update index 4, pin = 6, input PWM_Value=105, mapped PWM_Value= 120
+Update index 5, pin = 7, input PWM_Value=105, mapped PWM_Value= 120
+Update index 6, pin = 8, input PWM_Value=105, mapped PWM_Value= 120
+Update index 7, pin = 9, input PWM_Value=105, mapped PWM_Value= 120
+Test PWM_Value = 105, max = 255
+Update index 0, pin = 2, input PWM_Value=110, mapped PWM_Value= 121
+Update index 1, pin = 3, input PWM_Value=110, mapped PWM_Value= 121
+Update index 2, pin = 4, input PWM_Value=110, mapped PWM_Value= 121
+Update index 3, pin = 5, input PWM_Value=110, mapped PWM_Value= 121
+Update index 4, pin = 6, input PWM_Value=110, mapped PWM_Value= 121
+Update index 5, pin = 7, input PWM_Value=110, mapped PWM_Value= 121
+Update index 6, pin = 8, input PWM_Value=110, mapped PWM_Value= 121
+Update index 7, pin = 9, input PWM_Value=110, mapped PWM_Value= 121
+Test PWM_Value = 110, max = 255
+Update index 0, pin = 2, input PWM_Value=115, mapped PWM_Value= 123
+Update index 1, pin = 3, input PWM_Value=115, mapped PWM_Value= 123
+Update index 2, pin = 4, input PWM_Value=115, mapped PWM_Value= 123
+Update index 3, pin = 5, input PWM_Value=115, mapped PWM_Value= 123
+Update index 4, pin = 6, input PWM_Value=115, mapped PWM_Value= 123
+Update index 5, pin = 7, input PWM_Value=115, mapped PWM_Value= 123
+Update index 6, pin = 8, input PWM_Value=115, mapped PWM_Value= 123
+Update index 7, pin = 9, input PWM_Value=115, mapped PWM_Value= 123
+Test PWM_Value = 115, max = 255
+Update index 0, pin = 2, input PWM_Value=120, mapped PWM_Value= 124
+Update index 1, pin = 3, input PWM_Value=120, mapped PWM_Value= 124
+Update index 2, pin = 4, input PWM_Value=120, mapped PWM_Value= 124
+Update index 3, pin = 5, input PWM_Value=120, mapped PWM_Value= 124
+Update index 4, pin = 6, input PWM_Value=120, mapped PWM_Value= 124
+Update index 5, pin = 7, input PWM_Value=120, mapped PWM_Value= 124
+Update index 6, pin = 8, input PWM_Value=120, mapped PWM_Value= 124
+Update index 7, pin = 9, input PWM_Value=120, mapped PWM_Value= 124
+Test PWM_Value = 120, max = 255
 ```
+
 ---
 ---
 
