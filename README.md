@@ -325,6 +325,7 @@ void setup()
  5. [TimerInterruptTest](examples/TimerInterruptTest)
  6. [TimerInterruptLEDDemo](examples/TimerInterruptLEDDemo)
  7. [FakeAnalogWrite](examples/FakeAnalogWrite)
+ 8. [Change_Interval](examples/Change_Interval)
 
 ---
 ---
