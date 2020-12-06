@@ -44,6 +44,11 @@ The catch is **your function is now part of an ISR (Interrupt Service Routine), 
 ---
 ---
 
+### Releases v1.1.1
+
+1. Add example [**Change_Interval**](examples/Change_Interval)
+2. Bump up version to sync with other TimerInterrupt Libraries. Modify Version String.
+
 ### Releases v1.0.2
 
 1. Add example [**ISR_16_Timers_Array_Complex**](examples/ISR_16_Timers_Array_Complex) and optimize example [**ISR_16_Timers_Array**](examples/ISR_16_Timers_Array)
@@ -60,7 +65,7 @@ The catch is **your function is now part of an ISR (Interrupt Service Routine), 
 ---
 ---
 
-## Prerequisite
+## Prerequisites
 
  1. [`Arduino IDE 1.8.13+` for Arduino](https://www.arduino.cc/en/Main/Software)
  2. [`Arduino mbed v1.3.0+`](https://www.arduino.cc/en/Guide/NANO33BLE#use-your-arduino-nano-33-ble-on-the-arduino-desktop-ide) for NRF52-based board using mbed-RTOS such as Nano-33-BLE.
@@ -90,7 +95,7 @@ Another way to install is to:
 
 1. Install [VS Code](https://code.visualstudio.com/)
 2. Install [PlatformIO](https://platformio.org/platformio-ide)
-3. Install [**NRF52_MBED_TimerInterrupt** library](https://platformio.org/lib/show/11489/NRF52_MBED_TimerInterrupt) by using [Library Manager](https://platformio.org/lib/show/11489/NRF52_MBED_TimerInterrupt/installation). Search for **NRF52_MBED_TimerInterrupt** in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
+3. Install [**NRF52_MBED_TimerInterrupt** library](https://platformio.org/lib/show/11489/NRF52_MBED_TimerInterrupt) or [**NRF52_MBED_TimerInterrupt** library](https://platformio.org/lib/show/11539/NRF52_MBED_TimerInterrupt) by using [Library Manager](https://platformio.org/lib/show/11489/NRF52_MBED_TimerInterrupt/installation). Search for **NRF52_MBED_TimerInterrupt** in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
 4. Use included [platformio.ini](platformio/platformio.ini) file from examples to ensure that all dependent libraries will installed automatically. Please visit documentation for the other options and examples at [Project Configuration File](https://docs.platformio.org/page/projectconf.html)
 
 ---
@@ -325,7 +330,7 @@ void setup()
  5. [TimerInterruptTest](examples/TimerInterruptTest)
  6. [TimerInterruptLEDDemo](examples/TimerInterruptLEDDemo)
  7. [FakeAnalogWrite](examples/FakeAnalogWrite)
- 8. [Change_Interval](examples/Change_Interval)
+ 8. [**Change_Interval**](examples/Change_Interval). New
 
 ---
 ---
@@ -401,7 +406,7 @@ typedef void (*irqCallback)  (void);
 
 /////////////////////////////////////////////////
 
-#define USE_COMPLEX_STRUCT      false
+#define USE_COMPLEX_STRUCT      true
 
 #if USE_COMPLEX_STRUCT
 
@@ -606,7 +611,7 @@ void setup()
   while (!Serial);
 
   Serial.printf("\nStarting ISR_16_Timers_Array_Complex on %s\n", BOARD_NAME);
-  Serial.printf("Version : v%s\n", NRF52_MBED_TIMER_INTERRUPT_VERSION);
+  Serial.println(NRF52_MBED_TIMER_INTERRUPT_VERSION);
 
   // Interval in microsecs
   if (ITimer.attachInterruptInterval(HW_TIMER_INTERVAL_US, TimerHandler))
@@ -660,7 +665,7 @@ While software timer, **programmed for 2s, is activated after more than 3.000s i
 
 ```
 Starting ISR_16_Timers_Array_Complex on Nano 33 BLE
-Version : 1.0.2
+NRF52_MBED_TimerInterrupt v1.1.1
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 10000
 Starting  ITimer OK, millis() = 714
@@ -1132,7 +1137,7 @@ Timer : 15, programmed : 80000, actual : 80009
 
 ```
 Starting TimerInterruptTest on Nano 33 BLE
-Version : v1.0.2
+NRF52_MBED_TimerInterrupt v1.1.1
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 1000000
 Starting  ITimer0 OK, millis() = 5660
@@ -1163,7 +1168,7 @@ Start ITimer0, millis() = 60680
 
 ```
 Starting Argument_None on Nano 33 BLE
-Version : 1.0.2
+NRF52_MBED_TimerInterrupt v1.1.1
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER1
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 500000
 Starting  ITimer0 OK, millis() = 1519
@@ -1188,9 +1193,8 @@ Time = 100010, Timer0Count = 197, Timer1Count = 49
 4. The following is the sample terminal output when running example [FakeAnalogWrite](examples/FakeAnalogWrite) on **Nano 33 BLE** to demonstrate the usage of PWWM fakeAnalogWrite to simulate PWM analogWrite, but being able to write to many more pins.
 
 ```
-
 Starting FakeAnalogWrite on Nano 33 BLE
-Version : v1.0.2
+NRF52_MBED_TimerInterrupt v1.1.1
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 100
 Starting  ITimer OK, millis() = 1811
@@ -1288,7 +1292,45 @@ Test PWM_Value = 120, max = 255
 ```
 
 ---
+
+5. The following is the sample terminal output when running example [Change_Interval](examples/Change_Interval) to demonstrate how to change Timer Interval on-the-fly
+
+```
+Starting Change_Interval on Nano 33 BLE
+NRF52_MBED_TimerInterrupt v1.1.1
+Starting  ITimer0 OK, millis() = 801
+Starting  ITimer1 OK, millis() = 805
+Time = 10001, Timer0Count = 18, , Timer1Count = 4
+Time = 20002, Timer0Count = 38, , Timer1Count = 9
+Changing Interval, Timer0 = 1000,  Timer1 = 4000
+Time = 30003, Timer0Count = 47, , Timer1Count = 11
+Time = 40004, Timer0Count = 57, , Timer1Count = 13
+Changing Interval, Timer0 = 500,  Timer1 = 2000
+Time = 50005, Timer0Count = 76, , Timer1Count = 17
+Time = 60006, Timer0Count = 96, , Timer1Count = 22
+Changing Interval, Timer0 = 1000,  Timer1 = 4000
+Time = 70007, Timer0Count = 105, , Timer1Count = 24
+Time = 80008, Timer0Count = 115, , Timer1Count = 26
+Changing Interval, Timer0 = 500,  Timer1 = 2000
+Time = 90009, Timer0Count = 134, , Timer1Count = 30
+Time = 100010, Timer0Count = 154, , Timer1Count = 35
+Changing Interval, Timer0 = 1000,  Timer1 = 4000
+Time = 110011, Timer0Count = 163, , Timer1Count = 37
+Time = 120012, Timer0Count = 173, , Timer1Count = 39
+Changing Interval, Timer0 = 500,  Timer1 = 2000
+Time = 130013, Timer0Count = 192, , Timer1Count = 43
+Time = 140014, Timer0Count = 212, , Timer1Count = 48
+Changing Interval, Timer0 = 1000,  Timer1 = 4000
+Time = 150015, Timer0Count = 221, , Timer1Count = 50
+Time = 160016, Timer0Count = 231, , Timer1Count = 52
+```
 ---
+---
+
+### Releases v1.1.1
+
+1. Add example [**Change_Interval**](examples/Change_Interval)
+2. Bump up version to sync with other TimerInterrupt Libraries. Modify Version String.
 
 ### Releases v1.0.2
 

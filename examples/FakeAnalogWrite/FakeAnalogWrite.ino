@@ -12,12 +12,13 @@
    Therefore, their executions are not blocked by bad-behaving functions / tasks.
    This important feature is absolutely necessary for mission-critical tasks.
 
-   Version: 1.0.2
+   Version: 1.1.1
 
    Version Modified By   Date      Comments
    ------- -----------  ---------- -----------
    1.0.1   K Hoang      22/11/2020 Initial coding and sync with NRF52_TimerInterrupt
    1.0.2   K Hoang      23/11/2020 Add and optimize examples
+   1.1.1   K.Hoang      06/12/2020 Add Change_Interval example. Bump up version to sync with other TimerInterrupt Libraries
 *****************************************************************************************************************************/
 /*
    Notes:
@@ -167,6 +168,8 @@ void doingSomething(int index)
     {
       if (curISRTimerData[index].PWM_Value > 0)
         digitalWrite(curISRTimerData[index].pin, 1);
+      else
+        digitalWrite(curISRTimerData[index].pin, 0);
     }
     else if (curISRTimerData[index].countPWM == curISRTimerData[index].PWM_Value)
     {
@@ -188,7 +191,7 @@ void setup()
   while (!Serial);
 
   Serial.printf("\nStarting FakeAnalogWrite on %s\n", BOARD_NAME);
-  Serial.printf("Version : v%s\n", NRF52_MBED_TIMER_INTERRUPT_VERSION);
+  Serial.println(NRF52_MBED_TIMER_INTERRUPT_VERSION);
 
   // Interval in microsecs
   if (ITimer.attachInterruptInterval(HW_TIMER_INTERVAL_US, TimerHandler))
@@ -274,6 +277,9 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
         curISRTimerData[i].PWM_Value      = 0;
       }
 
+      // Reset countPWM
+      curISRTimerData[i].countPWM = 0;
+
       return;
     }
   }
@@ -328,8 +334,8 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
   }
 }
 
-#define DELAY_BETWEEN_CHANGE_MS     10000L
-#define REPEAT_INTERVAL_MS          60000L
+#define DELAY_BETWEEN_CHANGE_MS     5000L
+#define REPEAT_INTERVAL_MS          10000L
 
 #define DIVIDER                     5
 

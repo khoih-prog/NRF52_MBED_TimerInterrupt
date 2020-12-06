@@ -19,12 +19,13 @@
    Based on BlynkTimer.h
    Author: Volodymyr Shymanskyy
 
-   Version: 1.0.2
+   Version: 1.1.1
 
    Version Modified By   Date      Comments
    ------- -----------  ---------- -----------
    1.0.1   K Hoang      22/11/2020 Initial coding and sync with NRF52_TimerInterrupt
    1.0.2   K Hoang      23/11/2020 Add and optimize examples
+   1.1.1   K.Hoang      06/12/2020 Add Change_Interval example. Bump up version to sync with other TimerInterrupt Libraries
 *****************************************************************************************************************************/
 
 /*
@@ -40,7 +41,7 @@
 */
 
 #if !( ARDUINO_ARCH_NRF52840 && TARGET_NAME == ARDUINO_NANO33BLE )
-  #error This code is designed to run on nRF52-based Nano-33-BLE boards using mbed-RTOS platform! Please check your Tools->Board setting.
+#error This code is designed to run on nRF52-based Nano-33-BLE boards using mbed-RTOS platform! Please check your Tools->Board setting.
 #endif
 
 // These define's must be placed at the beginning before #include "NRF52TimerInterrupt.h"
@@ -54,11 +55,11 @@
 //#endif
 
 #ifndef LED_BLUE_PIN
-  #define LED_BLUE_PIN          D7
+#define LED_BLUE_PIN          D7
 #endif
 
 #ifndef LED_RED_PIN
-  #define LED_RED_PIN           D8
+#define LED_RED_PIN           D8
 #endif
 
 #define TIMER0_INTERVAL_MS        500   //1000
@@ -99,7 +100,7 @@ void TimerHandler1(void)
 
   // Flag for checking to be sure ISR is working as Serial.print is not OK here in ISR
   Timer1Count++;
-  
+
   //timer interrupt toggles outputPin
   digitalWrite(LED_BLUE_PIN, toggle1);
   toggle1 = !toggle1;
@@ -109,15 +110,15 @@ void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(LED_BLUE_PIN, OUTPUT);
-  
+
   Serial.begin(115200);
   while (!Serial);
 
   delay(100);
 
   Serial.printf("\nStarting Change_Interval on %s\n", BOARD_NAME);
-  Serial.printf("Version : v%s\n", NRF52_MBED_TIMER_INTERRUPT_VERSION);
- 
+  Serial.println(NRF52_MBED_TIMER_INTERRUPT_VERSION);
+
   // Interval in microsecs
   if (ITimer0.attachInterruptInterval(TIMER0_INTERVAL_MS * 1000, TimerHandler0))
   {
@@ -156,12 +157,12 @@ void loop()
     {
       //setInterval(unsigned long interval, timerCallback callback)
       multFactor = (multFactor + 1) % 2;
-      
+
       ITimer0.setInterval(TIMER0_INTERVAL_MS * 1000 * (multFactor + 1), TimerHandler0);
       ITimer1.setInterval(TIMER1_INTERVAL_MS * 1000 * (multFactor + 1), TimerHandler1);
 
       Serial.printf("Changing Interval, Timer0 = %lu,  Timer1 = %lu\n", TIMER0_INTERVAL_MS * (multFactor + 1), TIMER1_INTERVAL_MS * (multFactor + 1));
-      
+
       lastChangeTime = currTime;
     }
   }

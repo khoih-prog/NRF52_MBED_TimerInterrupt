@@ -19,12 +19,13 @@
    Based on BlynkTimer.h
    Author: Volodymyr Shymanskyy
 
-   Version: 1.0.2
+   Version: 1.1.1
 
    Version Modified By   Date      Comments
    ------- -----------  ---------- -----------
    1.0.1   K Hoang      22/11/2020 Initial coding and sync with NRF52_TimerInterrupt
    1.0.2   K Hoang      23/11/2020 Add and optimize examples
+   1.1.1   K.Hoang      06/12/2020 Add Change_Interval example. Bump up version to sync with other TimerInterrupt Libraries
 *****************************************************************************************************************************/
 /*
   nRF52 has 5 Hardware TIMERs: NRF_TIMER0-NRF_TIMER4
@@ -76,7 +77,7 @@
 // It's better to replace with the new one later. But be careful not to chain break anything
 #include "hal/nrf_timer.h"
 
-#define NRF52_MBED_TIMER_INTERRUPT_VERSION       "1.0.2"
+#define NRF52_MBED_TIMER_INTERRUPT_VERSION       "NRF52_MBED_TimerInterrupt v1.1.1"
 
 #ifndef NRF52_MBED_TIMER_INTERRUPT_DEBUG
   #define NRF52_MBED_TIMER_INTERRUPT_DEBUG       0
