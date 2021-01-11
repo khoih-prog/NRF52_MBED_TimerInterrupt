@@ -81,7 +81,7 @@
 // It's better to replace with the new one later. But be careful not to chain break anything
 #include "hal/nrf_timer.h"
 
-#ifndef NRF52_TIMER_INTERRUPT_VERSION
+#ifndef NRF52_MBED_TIMER_INTERRUPT_VERSION
   #define NRF52_MBED_TIMER_INTERRUPT_VERSION       "NRF52_MBED_TimerInterrupt v1.2.0"
 #endif
 

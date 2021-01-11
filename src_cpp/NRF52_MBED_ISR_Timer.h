@@ -38,7 +38,7 @@
   #error This code is designed to run on nRF52-based Nano-33-BLE boards using mbed-RTOS platform! Please check your Tools->Board setting.
 #endif
 
-#ifndef NRF52_TIMER_INTERRUPT_VERSION
+#ifndef NRF52_MBED_TIMER_INTERRUPT_VERSION
   #define NRF52_MBED_TIMER_INTERRUPT_VERSION       "NRF52_MBED_TimerInterrupt v1.2.0"
 #endif
 
