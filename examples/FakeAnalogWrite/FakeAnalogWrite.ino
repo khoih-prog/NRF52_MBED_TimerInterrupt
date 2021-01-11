@@ -1,24 +1,32 @@
 /****************************************************************************************************************************
-   FakeAnalogWrite.ino
-   For NRF52 boards using mbed-RTOS such as Nano-33-BLE
-   Written by Khoi Hoang
+  FakeAnalogWrite.ino
+  For NRF52 boards using mbed-RTOS such as Nano-33-BLE
+  Written by Khoi Hoang
 
-   Built by Khoi Hoang https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt
-   Licensed under MIT license
+  Built by Khoi Hoang https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt
+  Licensed under MIT license
 
-   Now even you use all these new 16 ISR-based timers,with their maximum interval practically unlimited (limited only by
-   unsigned long miliseconds), you just consume only one NRF52 timer and avoid conflicting with other cores' tasks.
-   The accuracy is nearly perfect compared to software timers. The most important feature is they're ISR-based timers
-   Therefore, their executions are not blocked by bad-behaving functions / tasks.
-   This important feature is absolutely necessary for mission-critical tasks.
+  Now even you use all these new 16 ISR-based timers,with their maximum interval practically unlimited (limited only by
+  unsigned long miliseconds), you just consume only one NRF52 timer and avoid conflicting with other cores' tasks.
+  The accuracy is nearly perfect compared to software timers. The most important feature is they're ISR-based timers
+  Therefore, their executions are not blocked by bad-behaving functions / tasks.
+  This important feature is absolutely necessary for mission-critical tasks.
 
-   Version: 1.1.1
+  Based on SimpleTimer - A timer library for Arduino.
+  Author: mromani@ottotecnica.com
+  Copyright (c) 2010 OTTOTECNICA Italy
 
-   Version Modified By   Date      Comments
-   ------- -----------  ---------- -----------
-   1.0.1   K Hoang      22/11/2020 Initial coding and sync with NRF52_TimerInterrupt
-   1.0.2   K Hoang      23/11/2020 Add and optimize examples
-   1.1.1   K.Hoang      06/12/2020 Add Change_Interval example. Bump up version to sync with other TimerInterrupt Libraries
+  Based on BlynkTimer.h
+  Author: Volodymyr Shymanskyy
+
+  Version: 1.2.0
+
+  Version Modified By   Date      Comments
+  ------- -----------  ---------- -----------
+  1.0.1   K Hoang      22/11/2020 Initial coding and sync with NRF52_TimerInterrupt
+  1.0.2   K Hoang      23/11/2020 Add and optimize examples
+  1.1.1   K.Hoang      06/12/2020 Add Change_Interval example. Bump up version to sync with other TimerInterrupt Libraries
+  1.2.0   K.Hoang      11/01/2021 Add better debug feature. Optimize code and examples to reduce RAM usage
 *****************************************************************************************************************************/
 /*
    Notes:
@@ -44,11 +52,12 @@
 #error This code is designed to run on nRF52-based Nano-33-BLE boards using mbed-RTOS platform! Please check your Tools->Board setting.
 #endif
 
-// These define's must be placed at the beginning before #include "NRF52_MBED_TimerInterrupt.h"
+// These define's must be placed at the beginning before #include "NRF52TimerInterrupt.h"
+// _TIMERINTERRUPT_LOGLEVEL_ from 0 to 4
+// Don't define _TIMERINTERRUPT_LOGLEVEL_ > 0. Only for special ISR debugging only. Can hang the system.
 // For Nano33-BLE, don't use Serial.print() in ISR as system will definitely hang.
-#define NRF52_MBED_TIMER_INTERRUPT_DEBUG      1
-
-#define LOCAL_DEBUG                           1
+#define TIMER_INTERRUPT_DEBUG         1
+#define _TIMERINTERRUPT_LOGLEVEL_     0
 
 #include "NRF52_MBED_TimerInterrupt.h"
 
@@ -90,7 +99,7 @@ NRF52_MBED_Timer ITimer(NRF_TIMER_3);
 
 #define NUMBER_ISR_TIMERS         16
 
-void TimerHandler(void)
+void TimerHandler()
 {
   static bool toggle  = false;
   static int timeRun  = 0;
@@ -115,7 +124,7 @@ void TimerHandler(void)
 
 
 
-typedef void (*irqCallback)  (void);
+typedef void (*irqCallback)  ();
 
 /////////////////////////////////////////////////
 
@@ -190,21 +199,23 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
 
-  Serial.printf("\nStarting FakeAnalogWrite on %s\n", BOARD_NAME);
+  delay(100);
+
+  Serial.print(F("\nStarting FakeAnalogWrite on ")); Serial.println(BOARD_NAME);
   Serial.println(NRF52_MBED_TIMER_INTERRUPT_VERSION);
 
   // Interval in microsecs
   if (ITimer.attachInterruptInterval(HW_TIMER_INTERVAL_US, TimerHandler))
   {
     startMillis = millis();
-    Serial.printf("Starting  ITimer OK, millis() = %ld\n", startMillis);
+    Serial.print(F("Starting ITimer OK, millis() = ")); Serial.println(startMillis);
   }
   else
-    Serial.println("Can't set ITimer correctly. Select another freq. or interval");
+    Serial.println(F("Can't set ITimer correctly. Select another freq. or interval"));
 
   // Just to demonstrate, don't use too many ISR Timers if not absolutely necessary
   // You can use up to 16 timer for each ISR_Timer
-  for (int i = 0; i < NUMBER_ISR_TIMERS; i++)
+  for (uint16_t i = 0; i < NUMBER_ISR_TIMERS; i++)
   {
     curISRTimerData[i].beingUsed      = false;
     curISRTimerData[i].pin            = 0;
@@ -220,7 +231,7 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
   uint16_t localIndex = 0;
 
   // First check if already got that pin, then just update the PWM_Value
-  for (int i = 0; i < NUMBER_ISR_TIMERS; i++)
+  for (uint16_t i = 0; i < NUMBER_ISR_TIMERS; i++)
   {
     if ( (curISRTimerData[i].beingUsed) && (curISRTimerData[i].pin == pin) )
     {
@@ -228,8 +239,8 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
       
       if (curISRTimerData[i].PWM_PremapValue == localValue)
       {
-#if (LOCAL_DEBUG > 0)        
-        Serial.printf("Ignore : Same Value for index %d\n", i);
+#if (TIMER_INTERRUPT_DEBUG > 0)        
+        Serial.print(F("Ignore : Same Value for index = ")); Serial.println(i);
 #endif
         
         return;
@@ -247,7 +258,7 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
         else
         {
           // Get the mapping index
-          for (int j = 0; j < MAPPING_TABLE_SIZE; j++)
+          for (uint16_t j = 0; j < MAPPING_TABLE_SIZE; j++)
           {
             if ( (float) localValue < mappingTable[j])
             {
@@ -256,8 +267,8 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
             }
           }
 
-#if (LOCAL_DEBUG > 1)
-          Serial.printf("localIndex = %d\n", localIndex);
+#if (TIMER_INTERRUPT_DEBUG > 1)
+          Serial.print(F("localIndex = ")); Serial.println(localIndex);
 #endif
 
           // Can use map() function
@@ -265,8 +276,11 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
           curISRTimerData[i].PWM_Value = (uint16_t) ( (localIndex * 10 ) +
                                          ( (value - mappingTable[localIndex]) * 10 ) /  (mappingTable[localIndex + 1] - mappingTable[localIndex]) );
 
-#if (LOCAL_DEBUG > 0)
-      Serial.printf("Update index %d, pin = %d, input PWM_Value=%d, mapped PWM_Value= %d\n", i, pin, value, curISRTimerData[i].PWM_Value);
+#if (TIMER_INTERRUPT_DEBUG > 0)
+          Serial.print(F("Update index = ")); Serial.print(i);
+          Serial.print(F(", pin = ")); Serial.print(pin);
+          Serial.print(F(", input PWM_Value = ")); Serial.print(value);
+          Serial.print(F(", mapped PWM_Value = ")); Serial.println(curISRTimerData[i].PWM_Value);
 #endif                           
         }
       }
@@ -284,7 +298,7 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
     }
   }
 
-  for (int i = 0; i < NUMBER_ISR_TIMERS; i++)
+  for (uint16_t i = 0; i < NUMBER_ISR_TIMERS; i++)
   {
     if (!curISRTimerData[i].beingUsed)
     {
@@ -302,7 +316,7 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
       else
       {
         // Get the mapping index
-        for (int j = 0; j < MAPPING_TABLE_SIZE; j++)
+        for (uint16_t j = 0; j < MAPPING_TABLE_SIZE; j++)
         {
           if ( (float) localValue < mappingTable[j])
           {
@@ -311,8 +325,8 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
           }
         }
 
-#if (LOCAL_DEBUG > 1)
-        Serial.printf("localIndex = %d\n", localIndex);
+#if (TIMER_INTERRUPT_DEBUG > 1)
+        Serial.print(F("localIndex = ")); Serial.println(localIndex);
 #endif
 
         // Can use map() function
@@ -325,8 +339,11 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
 
       pinMode(pin, OUTPUT);
 
-#if (LOCAL_DEBUG > 0)
-      Serial.printf("Add index %d, pin = %d, input PWM_Value=%d, mapped PWM_Value= %d\n", i, pin, value, curISRTimerData[i].PWM_Value);
+#if (TIMER_INTERRUPT_DEBUG > 0)
+      Serial.print(F("Add index = ")); Serial.print(i);
+      Serial.print(F(", pin = ")); Serial.print(pin);
+      Serial.print(F(", input PWM_Value = ")); Serial.print(value);
+      Serial.print(F(", mapped PWM_Value = ")); Serial.println(curISRTimerData[i].PWM_Value);
 #endif
 
       return;
@@ -341,7 +358,7 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
 
 void loop()
 {
-  for (int i = 0; i <= MAX_PWM_VALUE / DIVIDER; i++)
+  for (uint16_t i = 0; i <= MAX_PWM_VALUE / DIVIDER; i++)
   {
     fakeAnalogWrite(D2, i * DIVIDER);
     fakeAnalogWrite(D3, i * DIVIDER);
@@ -352,13 +369,14 @@ void loop()
     fakeAnalogWrite(D8, i * DIVIDER);
     fakeAnalogWrite(D9, i * DIVIDER);
 
-#if (LOCAL_DEBUG > 0)
-    Serial.printf("Test PWM_Value = %d, max = %d\n", i * DIVIDER, MAX_PWM_VALUE - 1);
+#if (TIMER_INTERRUPT_DEBUG > 0)
+    Serial.print(F("Test PWM_Value = ")); Serial.print(i * DIVIDER);
+    Serial.print(F(", max = ")); Serial.println(MAX_PWM_VALUE - 1);
 #endif
-    
+
     delay(DELAY_BETWEEN_CHANGE_MS);
   }
 
-  Serial.println("===================");
+  Serial.println(F("==================="));
   delay(REPEAT_INTERVAL_MS);
 }

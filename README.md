@@ -9,17 +9,99 @@
 ---
 ---
 
-## Features
+## Table of Contents
+
+* [Why do we need this NRF52_MBED_TimerInterrupt library](#why-do-we-need-this-nrf52_mbed_timerinterrupt-library)
+  * [Features](#features)
+  * [Why using ISR-based Hardware Timer Interrupt is better](#why-using-isr-based-hardware-timer-interrupt-is-better)
+  * [Currently supported Boards](#currently-supported-boards)
+  * [Important Notes about ISR](#important-notes-about-isr)
+* [Changelog](#changelog)
+  * [Releases v1.2.0](#releases-v120)
+  * [Releases v1.1.1](#releases-v111)
+  * [Releases v1.0.2](#releases-v102)
+  * [Releases v1.0.1](#releases-v101)
+* [Prerequisites](#prerequisites)
+* [Installation](#installation)
+  * [Use Arduino Library Manager](#use-arduino-library-manager)
+  * [Manual Install](#manual-install)
+  * [VS Code & PlatformIO](#vs-code--platformio)
+* [Packages' Patches](#packages-patches)
+  * [1. For Adafruit nRF52840 and nRF52832 boards](#1-for-adafruit-nRF52840-and-nRF52832-boards)
+* [Libraries' Patches](#libraries-patches)
+  * [1. For application requiring 2K+ HTML page](#1-for-application-requiring-2k-html-page)
+  * [2. For Ethernet library](#2-for-ethernet-library)
+  * [3. For EthernetLarge library](#3-for-ethernetlarge-library)
+  * [4. For Etherne2 library](#4-for-ethernet2-library)
+  * [5. For Ethernet3 library](#5-for-ethernet3-library)
+  * [6. For UIPEthernet library](#6-for-uipethernet-library)
+* [HOWTO Fix `Multiple Definitions` Linker Error](#howto-fix-multiple-definitions-linker-error)
+* [New from v1.0.1](#new-from-v101)
+* [Usage](#usage)
+  * [1. Using only Hardware Timer directly](#1-using-only-hardware-timer-directly)
+    * [1.1 Init Hardware Timer](#11-init-hardware-timer)
+    * [1.2 Set Hardware Timer Interval and attach Timer Interrupt Handler function](#12-set-hardware-timer-interval-and-attach-timer-interrupt-handler-function)
+    * [1.3 Set Hardware Timer Frequency and attach Timer Interrupt Handler function](#13-set-hardware-timer-frequency-and-attach-timer-interrupt-handler-function)
+  * [2. Using 16 ISR_based Timers from 1 Hardware Timer](#2-using-16-isr_based-timers-from-1-hardware-timer)
+    * [2.1 Important Note](#21-important-note)
+    * [2.2 Init Hardware Timer and ISR-based Timer](#22-init-hardware-timer-and-isr-based-timer)
+    * [2.3 Set Hardware Timer Interval and attach Timer Interrupt Handler functions](#23-set-hardware-timer-interval-and-attach-timer-interrupt-handler-functions)
+* [Examples](#examples)
+  * [  1. Argument_None](examples/Argument_None)
+  * [  2. ISR_16_Timers_Array](examples/ISR_16_Timers_Array)
+  * [  3. ISR_16_Timers_Array_Complex](examples/ISR_16_Timers_Array_Complex)
+  * [  4. SwitchDebounce](examples/SwitchDebounce)
+  * [  5. TimerInterruptTest](examples/TimerInterruptTest)
+  * [  6. TimerInterruptLEDDemo](examples/TimerInterruptLEDDemo)
+  * [  7. **FakeAnalogWrite**](examples/FakeAnalogWrite)
+  * [  8. **Change_Interval**](examples/Change_Interval)
+* [Example ISR_16_Timers_Array_Complex](#example-isr_16_timers_array_complex)
+* [Debug Terminal Output Samples](#debug-terminal-output-samples)
+  * [1. ISR_16_Timers_Array_Complex on Arduino Nano_33_BLE](#1-isr_16_timers_array_complex-on-arduino-nano_33_ble)
+  * [2. TimerInterruptTest on Arduino Nano_33_BLE](#2-timerinterrupttest-on-arduino-nano_33_ble)
+  * [3. Argument_None on Arduino Nano_33_BLE](#3-argument_none-on-arduino-nano_33_ble)
+  * [4. FakeAnalogWrite on Arduino Nano_33_BLE](#4-fakeanalogwrite-on-arduino-nano_33_ble)
+  * [5. Change_Interval on Arduino Nano_33_BLE](#5-change_interval-on-arduino-nano_33_ble)
+* [Debug](#debug)
+* [Troubleshooting](#troubleshooting)
+* [Releases](#releases)
+* [Issues](#issues)
+* [TO DO](#to-do)
+* [DONE](#done)
+* [Contributions and Thanks](#contributions-and-thanks)
+* [Contributing](#contributing)
+* [License](#license)
+* [Copyright](#copyright)
+
+---
+---
+
+### Why do we need this [NRF52_MBED_TimerInterrupt library](https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt)
+
+### Features
 
 This library enables you to use Interrupt from Hardware Timers on an NRF52-based board using mbed-RTOS such as Nano-33-BLE.
 
 As **Hardware Timers are rare, and very precious assets** of any board, this library now enables you to use up to **16 ISR-based Timers, while consuming only 1 Hardware Timer**. Timers' interval is very long (**ulong millisecs**).
 
-### Why do we need this Hardware Timer Interrupt?
+Now with these new **16 ISR-based timers**, the maximum interval is **practically unlimited** (limited only by unsigned long miliseconds) while **the accuracy is nearly perfect** compared to software timers. 
+
+The most important feature is they're ISR-based timers. Therefore, their executions are **not blocked by bad-behaving functions / tasks**. This important feature is absolutely necessary for mission-critical tasks. 
+
+The [**ISR_Timer_Complex**](examples/ISR_Timer_Complex) example will demonstrate the nearly perfect accuracy compared to software timers by printing the actual elapsed millisecs of each type of timers.
+
+Being ISR-based timers, their executions are not blocked by bad-behaving functions / tasks, such as connecting to WiFi, Internet and Blynk services. You can also have many `(up to 16)` timers to use.
+
+This non-being-blocked important feature is absolutely necessary for mission-critical tasks.
+
+You'll see blynkTimer Software is blocked while system is connecting to WiFi / Internet / Blynk, as well as by blocking task 
+in loop(), using delay() function as an example. The elapsed time then is very unaccurate
+
+### Why using ISR-based Hardware Timer Interrupt is better
 
 Imagine you have a system with a **mission-critical** function, measuring water level and control the sump pump or doing something much more important. You normally use a software timer to poll, or even place the function in loop(). But what if another function is **blocking** the loop() or setup().
 
-So your function **might not be executed on-time or not at all, and the result would be disastrous.**
+So your function **might not be executed, and the result would be disastrous.**
 
 You'd prefer to have your function called, no matter what happening with other functions (busy loop, bug, etc.).
 
@@ -35,7 +117,13 @@ The catch is **your function is now part of an ISR (Interrupt Service Routine), 
 
 ---
 
-#### Important Notes:
+### Currently supported Boards
+
+  - **Arduino Nano-33-BLE**
+
+---
+
+### Important Notes about ISR
 
 1. Inside the attached function, **delay() won’t work and the value returned by millis() will not increment.** Serial data received while in the function may be lost. You should declare as **volatile any variables that you modify within the attached function.**
 
@@ -43,6 +131,14 @@ The catch is **your function is now part of an ISR (Interrupt Service Routine), 
 
 ---
 ---
+
+## Changelog
+
+### Releases v1.2.0
+
+1. Add better debug feature.
+2. Optimize code and examples to reduce RAM usage
+3. Add Table of Contents
 
 ### Releases v1.1.1
 
@@ -58,10 +154,6 @@ The catch is **your function is now part of an ISR (Interrupt Service Routine), 
 1. Initial coding for Nano-33-BLE and sync with [**NRF52_TimerInterrupt Library**](https://github.com/khoih-prog/NRF52_TimerInterrupt)
 
 
-#### Supported Boards
-
-  - **Arduino Nano-33-BLE**
-
 ---
 ---
 
@@ -69,7 +161,7 @@ The catch is **your function is now part of an ISR (Interrupt Service Routine), 
 
  1. [`Arduino IDE 1.8.13+` for Arduino](https://www.arduino.cc/en/Main/Software)
  2. [`Arduino mbed v1.3.0+`](https://www.arduino.cc/en/Guide/NANO33BLE#use-your-arduino-nano-33-ble-on-the-arduino-desktop-ide) for NRF52-based board using mbed-RTOS such as Nano-33-BLE.
- 3. To use with certain example
+ 3. To use with certain examples
    - [`SimpleTimer library`](https://github.com/schinken/SimpleTimer) for [ISR_16_Timers_Array example](examples/ISR_16_Timers_Array).
    
 ---
@@ -101,41 +193,54 @@ Another way to install is to:
 ---
 ---
 
-### Optional Libraries' Patches
+### Libraries' Patches
 
-##### Notes: These patches are totally optional and necessary only when you use the related Ethernet library and get certain error or issues.
+#### Notes: These patches are totally optional and necessary only when you use the related Ethernet library and get certain error or issues.
 
-1. If your application requires 2K+ HTML page, the current [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) must be modified if you are using W5200/W5500 Ethernet shields. W5100 is not supported for 2K+ buffer. If you use boards requiring different CS/SS pin for W5x00 Ethernet shield, for example ESP32, ESP8266, nRF52, etc., you also have to modify the following libraries to be able to specify the CS/SS pin correctly.
+#### 1. For application requiring 2K+ HTML page
 
-2. To fix [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet), just copy these following files into the [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) directory to overwrite the old files:
+If your application requires 2K+ HTML page, the current [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) must be modified if you are using W5200/W5500 Ethernet shields. W5100 is not supported for 2K+ buffer. If you use boards requiring different CS/SS pin for W5x00 Ethernet shield, for example ESP32, ESP8266, nRF52, etc., you also have to modify the following libraries to be able to specify the CS/SS pin correctly.
+
+#### 2. For Ethernet library
+
+To fix [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet), just copy these following files into the [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) directory to overwrite the old files:
 - [Ethernet.h](LibraryPatches/Ethernet/src/Ethernet.h)
 - [Ethernet.cpp](LibraryPatches/Ethernet/src/Ethernet.cpp)
 - [EthernetServer.cpp](LibraryPatches/Ethernet/src/EthernetServer.cpp)
 - [w5100.h](LibraryPatches/Ethernet/src/utility/w5100.h)
 - [w5100.cpp](LibraryPatches/Ethernet/src/utility/w5100.cpp)
 
-3. To fix [`EthernetLarge library`](https://github.com/OPEnSLab-OSU/EthernetLarge), just copy these following files into the [`EthernetLarge library`](https://github.com/OPEnSLab-OSU/EthernetLarge) directory to overwrite the old files:
+#### 3. For EthernetLarge library
+
+To fix [`EthernetLarge library`](https://github.com/OPEnSLab-OSU/EthernetLarge), just copy these following files into the [`EthernetLarge library`](https://github.com/OPEnSLab-OSU/EthernetLarge) directory to overwrite the old files:
 - [EthernetLarge.h](LibraryPatches/EthernetLarge/src/EthernetLarge.h)
 - [EthernetLarge.cpp](LibraryPatches/EthernetLarge/src/EthernetLarge.cpp)
 - [EthernetServer.cpp](LibraryPatches/EthernetLarge/src/EthernetServer.cpp)
 - [w5100.h](LibraryPatches/EthernetLarge/src/utility/w5100.h)
 - [w5100.cpp](LibraryPatches/EthernetLarge/src/utility/w5100.cpp)
 
-4. To fix [`Ethernet2 library`](https://github.com/khoih-prog/Ethernet2), just copy these following files into the [`Ethernet2 library`](https://github.com/khoih-prog/Ethernet2) directory to overwrite the old files:
+
+#### 4. For Ethernet2 library
+
+To fix [`Ethernet2 library`](https://github.com/khoih-prog/Ethernet2), just copy these following files into the [`Ethernet2 library`](https://github.com/khoih-prog/Ethernet2) directory to overwrite the old files:
 
 - [Ethernet2.h](LibraryPatches/Ethernet2/src/Ethernet2.h)
 - [Ethernet2.cpp](LibraryPatches/Ethernet2/src/Ethernet2.cpp)
 
-To add UDP Multicast support, necessary for this [**UPnP_Generic library**](https://github.com/khoih-prog/UPnP_Generic):
+To add UDP Multicast support, necessary for the [**UPnP_Generic library**](https://github.com/khoih-prog/UPnP_Generic):
 
 - [EthernetUdp2.h](LibraryPatches/Ethernet2/src/EthernetUdp2.h)
 - [EthernetUdp2.cpp](LibraryPatches/Ethernet2/src/EthernetUdp2.cpp)
+
+#### 5. For Ethernet3 library
 
 5. To fix [`Ethernet3 library`](https://github.com/sstaub/Ethernet3), just copy these following files into the [`Ethernet3 library`](https://github.com/sstaub/Ethernet3) directory to overwrite the old files:
 - [Ethernet3.h](LibraryPatches/Ethernet3/src/Ethernet3.h)
 - [Ethernet3.cpp](LibraryPatches/Ethernet3/src/Ethernet3.cpp)
 
-6. **To be able to compile and run on nRF52 boards with ENC28J60 using UIPEthernet library**, you have to copy these following files into the UIPEthernet `utility` directory to overwrite the old files:
+#### 6. For UIPEthernet library
+
+***To be able to compile and run on nRF52 boards with ENC28J60 using UIPEthernet library***, you have to copy these following files into the UIPEthernet `utility` directory to overwrite the old files:
 
 - For [UIPEthernet v2.0.8](https://github.com/UIPEthernet/UIPEthernet)
 
@@ -151,7 +256,6 @@ To add UDP Multicast support, necessary for this [**UPnP_Generic library**](http
   - [Enc28J60Network.h](LibraryPatches/UIPEthernet-2.0.9/utility/Enc28J60Network.h)
   - [Enc28J60Network.cpp](LibraryPatches/UIPEthernet-2.0.9/utility/Enc28J60Network.cpp)
 
-7. Check if you need to install the UIPthernet patch [new NRF52 core F3/F4 compatibility](https://github.com/UIPEthernet/UIPEthernet/commit/c6d6519a260166b722b9cee5dd1f0fb2682e6782) to avoid errors `#include HardwareSPI.h` on some NRF52 boards (Nucleo-32 F303K8, etc.)
 
 ---
 ---
@@ -193,11 +297,6 @@ You'll see blynkTimer Software is blocked while system is connecting to WiFi / I
 in loop(), using delay() function as an example. The elapsed time then is very unaccurate
 
 ---
-
-## Supported Boards
-
-- **NRF52840-based board using mbed-RTOS such as Nano-33-BLE.**
-
 ---
 
 ## Usage
@@ -218,6 +317,20 @@ NRF52_MBED_Timer ITimer(NRF_TIMER_3);
 
 #### 1.2 Set Hardware Timer Interval and attach Timer Interrupt Handler function
 
+Use one of these functions with **interval in unsigned long milliseconds**
+
+```
+// interval (in microseconds).
+// No params and duration now. To be added in the future by adding similar functions here or to NRF52-hal-timer.c
+bool setInterval(unsigned long interval, timerCallback callback);
+
+// interval (in microseconds).
+// No params and duration now. To be added in the future by adding similar functions here or to NRF52-hal-timer.c
+bool attachInterruptInterval(unsigned long interval, timerCallback callback);
+```
+
+as follows
+
 ```
 void TimerHandler(void)
 {
@@ -231,20 +344,60 @@ void setup()
   ....
   
   // Interval in microsecs
-  if (ITimer.attachInterruptInterval(HW_TIMER_INTERVAL_US, TimerHandler))
+  if (ITimer.attachInterruptInterval(TIMER_INTERVAL_MS * 1000, TimerHandler0))
   {
-    startMillis = millis();
-    Serial.printf("Starting  ITimer OK, millis() = %ld\n", startMillis);
+    Serial.print(F("Starting ITimer0 OK, millis() = ")); Serial.println(millis());
   }
   else
-    Serial.println("Can't set ITimer correctly. Select another freq. or interval");
+    Serial.println(F("Can't set ITimer0. Select another freq. or timer));
 }  
 ```
 
-### 2. Using 16 ISR_based Timers from 1 Hardware Timers
+### 1.3 Set Hardware Timer Frequency and attach Timer Interrupt Handler function
 
+Use one of these functions with **frequency in float Hz**
 
-#### 2.1 Init Hardware Timer and ISR-based Timer
+```
+// frequency (in hertz).
+// No params and duration now. To be added in the future by adding similar functions here or to NRF52-hal-timer.c
+bool setFrequency(float frequency, timerCallback callback);
+
+// frequency (in hertz).
+bool attachInterrupt(float frequency, timerCallback callback);
+```
+
+as follows
+
+```
+void TimerHandler0()
+{
+  // Doing something here inside ISR
+  // No Serial.print() can be used
+}
+
+#define TIMER0_FREQ_HZ        5555.555
+
+void setup()
+{
+  ....
+  
+  // Frequency in float Hz
+  if (ITimer0.attachInterrupt(TIMER0_FREQ_HZ, TimerHandler0))
+  {
+    Serial.print(F("Starting ITimer0 OK, millis() = ")); Serial.println(millis());
+  }
+  else
+    Serial.println(F("Can't set ITimer0. Select another freq. or timer));
+}  
+```
+
+### 2. Using 16 ISR_based Timers from 1 Hardware Timer
+
+### 2.1 Important Note
+
+The 16 ISR_based Timers, designed for long timer intervals, only support using **unsigned long millisec intervals**. If you have to use much higher frequency or sub-millisecond interval, you have to use the Hardware Timers directly as in [1.3 Set Hardware Timer Frequency and attach Timer Interrupt Handler function](#13-set-hardware-timer-frequency-and-attach-timer-interrupt-handler-function)
+
+### 2.2 Init Hardware Timer and ISR-based Timer
 
 ```
 // Depending on the board, you can select NRF52 Hardware Timer from NRF_TIMER_1,NRF_TIMER_3,NRF_TIMER_4 (1,3 and 4)
@@ -258,7 +411,7 @@ NRF52_MBED_Timer ITimer(NRF_TIMER_3);
 NRF52_MBED_ISRTimer ISR_Timer;
 ```
 
-#### 2.2 Set Hardware Timer Interval and attach Timer Interrupt Handler functions
+### 2.3 Set Hardware Timer Interval and attach Timer Interrupt Handler functions
 
 ```
 void TimerHandler(void)
@@ -342,9 +495,12 @@ void setup()
   #error This code is designed to run on nRF52-based Nano-33-BLE boards using mbed-RTOS platform! Please check your Tools->Board setting.
 #endif
 
-// These define's must be placed at the beginning before #include "NRF52_MBED_TimerInterrupt.h"
+// These define's must be placed at the beginning before #include "NRF52TimerInterrupt.h"
+// _TIMERINTERRUPT_LOGLEVEL_ from 0 to 4
+// Don't define _TIMERINTERRUPT_LOGLEVEL_ > 0. Only for special ISR debugging only. Can hang the system.
 // For Nano33-BLE, don't use Serial.print() in ISR as system will definitely hang.
-#define NRF52_MBED_TIMER_INTERRUPT_DEBUG      1
+#define TIMER_INTERRUPT_DEBUG         0
+#define _TIMERINTERRUPT_LOGLEVEL_     0
 
 #include "NRF52_MBED_TimerInterrupt.h"
 
@@ -380,7 +536,7 @@ NRF52_MBED_ISRTimer ISR_Timer;
 
 #define LED_TOGGLE_INTERVAL_MS        2000L
 
-void TimerHandler(void)
+void TimerHandler()
 {
   static bool toggle  = false;
   static int timeRun  = 0;
@@ -402,7 +558,7 @@ void TimerHandler(void)
 
 #define NUMBER_ISR_TIMERS         16
 
-typedef void (*irqCallback)  (void);
+typedef void (*irqCallback)  ();
 
 /////////////////////////////////////////////////
 
@@ -589,15 +745,21 @@ void simpleTimerDoingSomething2s()
 
   unsigned long currMillis = millis();
 
-  Serial.printf("SimpleTimer : %lus, ms = %lu, Dms : %lu\n", SIMPLE_TIMER_MS / 1000, currMillis, currMillis - previousMillis);
+  Serial.print(F("SimpleTimer : "));Serial.print(SIMPLE_TIMER_MS / 1000);
+  Serial.print(F(", ms : ")); Serial.print(currMillis);
+  Serial.print(F(", Dms : ")); Serial.println(currMillis - previousMillis);
 
-  for (int i = 0; i < NUMBER_ISR_TIMERS; i++)
+  for (uint16_t i = 0; i < NUMBER_ISR_TIMERS; i++)
   {
 #if USE_COMPLEX_STRUCT    
-    Serial.printf("Timer : %d, programmed : %lu, actual : %lu\n", i, curISRTimerData[i].TimerInterval, curISRTimerData[i].deltaMillis);
+    Serial.print(F("Timer : ")); Serial.print(i);
+    Serial.print(F(", programmed : ")); Serial.print(curISRTimerData[i].TimerInterval);
+    Serial.print(F(", actual : ")); Serial.println(curISRTimerData[i].deltaMillis);
 #else
-    Serial.printf("Timer : %d, programmed : %lu, actual : %lu\n", i, TimerInterval[i], deltaMillis[i]);
-#endif    
+    Serial.print(F("Timer : ")); Serial.print(i);
+    Serial.print(F(", programmed : ")); Serial.print(TimerInterval[i]);
+    Serial.print(F(", actual : ")); Serial.println(deltaMillis[i]);
+#endif   
   }
 
   previousMillis = currMillis;
@@ -610,21 +772,23 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
 
-  Serial.printf("\nStarting ISR_16_Timers_Array_Complex on %s\n", BOARD_NAME);
+  delay(100);
+
+  Serial.print(F("\nStarting ISR_16_Timers_Array_Complex on ")); Serial.println(BOARD_NAME);
   Serial.println(NRF52_MBED_TIMER_INTERRUPT_VERSION);
 
   // Interval in microsecs
   if (ITimer.attachInterruptInterval(HW_TIMER_INTERVAL_US, TimerHandler))
   {
     startMillis = millis();
-    Serial.printf("Starting  ITimer OK, millis() = %ld\n", startMillis);
+    Serial.print(F("Starting ITimer OK, millis() = ")); Serial.println(startMillis);
   }
   else
-    Serial.println("Can't set ITimer correctly. Select another freq. or interval");
+    Serial.println(F("Can't set ITimer. Select another freq. or interval"));
 
   // Just to demonstrate, don't use too many ISR Timers if not absolutely necessary
   // You can use up to 16 timer for each ISR_Timer
-  for (int i = 0; i < NUMBER_ISR_TIMERS; i++)
+  for (uint16_t i = 0; i < NUMBER_ISR_TIMERS; i++)
   {
 #if USE_COMPLEX_STRUCT
     curISRTimerData[i].previousMillis = startMillis;
@@ -659,13 +823,15 @@ void loop()
 
 ### Debug Terminal Output Samples
 
-1. The following is the sample terminal output when running example [ISR_16_Timers_Array_Complex](examples/ISR_16_Timers_Array_Complex) on **Nano 33 BLE** to demonstrate the accuracy of ISR Hardware Timer, **especially when system is very busy**.  The ISR timer is **programmed for 2s, is activated exactly after 2.000s !!!**
+### 1. ISR_16_Timers_Array_Complex on Arduino Nano_33_BLE
+
+The following is the sample terminal output when running example [ISR_16_Timers_Array_Complex](examples/ISR_16_Timers_Array_Complex) on **Arduino Nano_33_BLE** to demonstrate the accuracy of ISR Hardware Timer, **especially when system is very busy**.  The ISR timer is **programmed for 2s, is activated exactly after 2.000s !!!**
 
 While software timer, **programmed for 2s, is activated after more than 3.000s in loop().
 
 ```
 Starting ISR_16_Timers_Array_Complex on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.1.1
+NRF52_MBED_TimerInterrupt v1.2.0
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 10000
 Starting  ITimer OK, millis() = 714
@@ -1133,11 +1299,13 @@ Timer : 15, programmed : 80000, actual : 80009
 
 ---
 
-2. The following is the sample terminal output when running example [**TimerInterruptTest**](examples/TimerInterruptTest) on **Arduino Nano-33-BLE** to demonstrate the accuracy and how to start/stop Hardware Timers.
+### 2. TimerInterruptTest on Arduino Nano_33_BLE
+
+The following is the sample terminal output when running example [**TimerInterruptTest**](examples/TimerInterruptTest) on **Arduino Nano_33_BLE** to demonstrate the accuracy and how to start/stop Hardware Timers.
 
 ```
 Starting TimerInterruptTest on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.1.1
+NRF52_MBED_TimerInterrupt v1.2.0
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 1000000
 Starting  ITimer0 OK, millis() = 5660
@@ -1164,11 +1332,13 @@ Start ITimer0, millis() = 60680
 
 ---
 
-3. The following is the sample terminal output when running example [**Argument_None**](examples/Argument_None) on **Arduino Nano-33-BLE** to demonstrate the accuracy of Hardware Timers.
+### 3. Argument_None on Arduino Nano_33_BLE
+
+The following is the sample terminal output when running example [**Argument_None**](examples/Argument_None) on **Arduino Nano_33_BLE** to demonstrate the accuracy of Hardware Timers.
 
 ```
 Starting Argument_None on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.1.1
+NRF52_MBED_TimerInterrupt v1.2.0
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER1
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 500000
 Starting  ITimer0 OK, millis() = 1519
@@ -1190,11 +1360,13 @@ Time = 100010, Timer0Count = 197, Timer1Count = 49
 
 ---
 
-4. The following is the sample terminal output when running example [FakeAnalogWrite](examples/FakeAnalogWrite) on **Nano 33 BLE** to demonstrate the usage of PWWM fakeAnalogWrite to simulate PWM analogWrite, but being able to write to many more pins.
+### 4. FakeAnalogWrite on Arduino Nano_33_BLE
+
+The following is the sample terminal output when running example [FakeAnalogWrite](examples/FakeAnalogWrite) on **Arduino Nano_33_BLE** to demonstrate the usage of PWWM fakeAnalogWrite to simulate PWM analogWrite, but being able to write to many more pins.
 
 ```
 Starting FakeAnalogWrite on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.1.1
+NRF52_MBED_TimerInterrupt v1.2.0
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 100
 Starting  ITimer OK, millis() = 1811
@@ -1293,7 +1465,9 @@ Test PWM_Value = 120, max = 255
 
 ---
 
-5. The following is the sample terminal output when running example [Change_Interval](examples/Change_Interval) to demonstrate how to change Timer Interval on-the-fly
+### 5. Change_Interval on Arduino Nano_33_BLE
+
+The following is the sample terminal output when running example [Change_Interval](examples/Change_Interval) on **Arduino Nano_33_BLE** to demonstrate how to change Timer Interval on-the-fly
 
 ```
 Starting Change_Interval on Nano 33 BLE
@@ -1324,8 +1498,42 @@ Changing Interval, Timer0 = 1000,  Timer1 = 4000
 Time = 150015, Timer0Count = 221, , Timer1Count = 50
 Time = 160016, Timer0Count = 231, , Timer1Count = 52
 ```
+
 ---
 ---
+
+### Debug
+
+Debug is enabled by default on Serial.
+
+You can also change the debugging level (_TIMERINTERRUPT_LOGLEVEL_) from 0 to 4
+
+```cpp
+// These define's must be placed at the beginning before #include "NRF52_MBED_TimerInterrupt.h"
+// _TIMERINTERRUPT_LOGLEVEL_ from 0 to 4
+// Don't define _TIMERINTERRUPT_LOGLEVEL_ > 0. Only for special ISR debugging only. Can hang the system.
+#define TIMER_INTERRUPT_DEBUG         0
+#define _TIMERINTERRUPT_LOGLEVEL_     0
+```
+
+---
+
+### Troubleshooting
+
+If you get compilation errors, more often than not, you may need to install a newer version of the core for Arduino boards.
+
+Sometimes, the library will only work if you update the board core to the latest version because I am using newly added functions.
+
+---
+---
+
+## Releases
+
+### Releases v1.2.0
+
+1. Add better debug feature.
+2. Optimize code and examples to reduce RAM usage
+3. Add Table of Contents
 
 ### Releases v1.1.1
 
@@ -1340,6 +1548,8 @@ Time = 160016, Timer0Count = 231, , Timer1Count = 52
 
 1. Initial coding for Nano-33-BLE and sync with [**NRF52_TimerInterrupt Library**](https://github.com/khoih-prog/NRF52_TimerInterrupt)
 
+---
+
 #### Supported Boards
 
   - **Arduino Nano-33-BLE**
@@ -1347,7 +1557,7 @@ Time = 160016, Timer0Count = 231, , Timer1Count = 52
 ---
 ---
 
-### Issues ###
+### Issues
 
 Submit issues to: [NRF52_MBED_TimerInterrupt issues](https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt/issues)
 
@@ -1357,12 +1567,15 @@ Submit issues to: [NRF52_MBED_TimerInterrupt issues](https://github.com/khoih-pr
 
 1. Search for bug and improvement.
 
+---
 
 ## DONE
 
 1. Basic hardware timers for NRF52832 and NRF52840.
 2. More hardware-initiated software-enabled timers
 3. Longer time interval
+4. Similar features for remaining Arduino boards such as AVR, ESP32, ESP8266, STM32, SAM-DUE, SAMD21/SAMD51, nRF52, Teensy, etc.
+5. Add Table of Contents
 
 ---
 ---

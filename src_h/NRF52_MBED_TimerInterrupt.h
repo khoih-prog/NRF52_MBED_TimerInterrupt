@@ -1,31 +1,32 @@
 /****************************************************************************************************************************
-   NRF52_MBED_TimerInterrupt.h
-   For NRF52 boards using mbed-RTOS such as Nano-33-BLE
-   Written by Khoi Hoang
+  NRF52_MBED_TimerInterrupt.h
+  For NRF52 boards using mbed-RTOS such as Nano-33-BLE
+  Written by Khoi Hoang
 
-   Built by Khoi Hoang https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt
-   Licensed under MIT license
+  Built by Khoi Hoang https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt
+  Licensed under MIT license
 
-   Now even you use all these new 16 ISR-based timers,with their maximum interval practically unlimited (limited only by
-   unsigned long miliseconds), you just consume only one NRF52 timer and avoid conflicting with other cores' tasks.
-   The accuracy is nearly perfect compared to software timers. The most important feature is they're ISR-based timers
-   Therefore, their executions are not blocked by bad-behaving functions / tasks.
-   This important feature is absolutely necessary for mission-critical tasks.
+  Now even you use all these new 16 ISR-based timers,with their maximum interval practically unlimited (limited only by
+  unsigned long miliseconds), you just consume only one NRF52 timer and avoid conflicting with other cores' tasks.
+  The accuracy is nearly perfect compared to software timers. The most important feature is they're ISR-based timers
+  Therefore, their executions are not blocked by bad-behaving functions / tasks.
+  This important feature is absolutely necessary for mission-critical tasks.
 
-   Based on SimpleTimer - A timer library for Arduino.
-   Author: mromani@ottotecnica.com
-   Copyright (c) 2010 OTTOTECNICA Italy
+  Based on SimpleTimer - A timer library for Arduino.
+  Author: mromani@ottotecnica.com
+  Copyright (c) 2010 OTTOTECNICA Italy
 
-   Based on BlynkTimer.h
-   Author: Volodymyr Shymanskyy
+  Based on BlynkTimer.h
+  Author: Volodymyr Shymanskyy
 
-   Version: 1.1.1
+  Version: 1.2.0
 
-   Version Modified By   Date      Comments
-   ------- -----------  ---------- -----------
-   1.0.1   K Hoang      22/11/2020 Initial coding and sync with NRF52_TimerInterrupt
-   1.0.2   K Hoang      23/11/2020 Add and optimize examples
-   1.1.1   K.Hoang      06/12/2020 Add Change_Interval example. Bump up version to sync with other TimerInterrupt Libraries
+  Version Modified By   Date      Comments
+  ------- -----------  ---------- -----------
+  1.0.1   K Hoang      22/11/2020 Initial coding and sync with NRF52_TimerInterrupt
+  1.0.2   K Hoang      23/11/2020 Add and optimize examples
+  1.1.1   K.Hoang      06/12/2020 Add Change_Interval example. Bump up version to sync with other TimerInterrupt Libraries
+  1.2.0   K.Hoang      11/01/2021 Add better debug feature. Optimize code and examples to reduce RAM usage
 *****************************************************************************************************************************/
 /*
   nRF52 has 5 Hardware TIMERs: NRF_TIMER0-NRF_TIMER4
@@ -67,6 +68,9 @@
 */
 #pragma once
 
+#ifndef NRF52_MBED_TIMERINTERRUPT_H
+#define NRF52_MBED_TIMERINTERRUPT_H
+
 #if !( ARDUINO_ARCH_NRF52840 && TARGET_NAME == ARDUINO_NANO33BLE )
   #error This code is designed to run on nRF52-based Nano-33-BLE boards using mbed-RTOS platform! Please check your Tools->Board setting.
 #endif
@@ -77,11 +81,11 @@
 // It's better to replace with the new one later. But be careful not to chain break anything
 #include "hal/nrf_timer.h"
 
-#define NRF52_MBED_TIMER_INTERRUPT_VERSION       "NRF52_MBED_TimerInterrupt v1.1.1"
-
-#ifndef NRF52_MBED_TIMER_INTERRUPT_DEBUG
-  #define NRF52_MBED_TIMER_INTERRUPT_DEBUG       0
+#ifndef NRF52_TIMER_INTERRUPT_VERSION
+  #define NRF52_MBED_TIMER_INTERRUPT_VERSION       "NRF52_MBED_TimerInterrupt v1.2.0"
 #endif
+
+#include "TimerInterrupt_Generic_Debug.h"
 
 class NRF52_MBED_TimerInterrupt;
 
@@ -246,24 +250,24 @@ class NRF52_MBED_TimerInterrupt
       } 
       else 
       {
-          Serial.println("NRF52_MBED_TimerInterrupt: ERROR: NULL callback function pointer.");
+          TISR_LOGERROR(F("NRF52_MBED_TimerInterrupt: ERROR: NULL callback function pointer."));
+
           return false;
       }
       
       if ( (frequency <= 0) || (frequency > _frequency / 10.0f) )
       {
-        Serial.println("NRF52_MBED_TimerInterrupt: ERROR: Negative or Too high frequency. Must be <= " + String(_frequency/10.0f));
+        TISR_LOGERROR1(F("NRF52_MBED_TimerInterrupt: ERROR: Negative or Too high frequency. Must be <="), _frequency/10.0f);
+        
         return false;
       }
       
       // select timer frequency is 1MHz for better accuracy. We don't use 16-bit prescaler for now.
       // Will use later if very low frequency is needed.
       _timerCount = (uint32_t) _frequency / frequency;
-
-#if (NRF52_MBED_TIMER_INTERRUPT_DEBUG > 0)
-      Serial.println("NRF52_MBED_TimerInterrupt: Timer = " + String(NRF52_MBED_TimerName[_timer]) );
-      Serial.println("NRF52_MBED_TimerInterrupt: _fre = " + String(_frequency) + ", _count = " + String((uint32_t) (_timerCount)));          
-#endif
+      
+      TISR_LOGWARN1(F("NRF52_MBED_TimerInterrupt: Timer ="), NRF52_MBED_TimerName[_timer]);
+      TISR_LOGWARN3(F("Frequency ="), _frequency, F(", _count ="), (uint32_t) (_timerCount));
 
       // Start if not already running (and reset?)
       nrf_timer_task_trigger(nrf_timer, NRF_TIMER_TASK_START);
@@ -407,3 +411,5 @@ extern "C" void TIMER4_IRQHandler_v(void)
     nRF52Timers[4]->enableTimer();
   }
 }
+
+#endif    // NRF52_MBED_TIMERINTERRUPT_H
