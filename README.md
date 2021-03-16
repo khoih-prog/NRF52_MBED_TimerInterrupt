@@ -158,7 +158,7 @@ The catch is **your function is now part of an ISR (Interrupt Service Routine), 
 ## Prerequisites
 
  1. [`Arduino IDE 1.8.13+` for Arduino](https://www.arduino.cc/en/Main/Software)
- 2. [`Arduino mbed v1.3.0+`](https://www.arduino.cc/en/Guide/NANO33BLE#use-your-arduino-nano-33-ble-on-the-arduino-desktop-ide) for NRF52-based board using mbed-RTOS such as Nano-33-BLE.
+ 2. [`Arduino mbed core v1.3.2+`](https://github.com/arduino/ArduinoCore-mbed) for NRF52-based board using mbed-RTOS such as Nano-33-BLE. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
  3. To use with certain examples
    - [`SimpleTimer library`](https://github.com/schinken/SimpleTimer) for [ISR_16_Timers_Array example](examples/ISR_16_Timers_Array).
    
