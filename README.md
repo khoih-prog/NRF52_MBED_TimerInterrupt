@@ -1492,7 +1492,7 @@ The following is the sample terminal output when running example [Change_Interva
 
 ```
 Starting Change_Interval on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.1.1
+NRF52_MBED_TimerInterrupt v1.2.1
 Starting  ITimer0 OK, millis() = 801
 Starting  ITimer1 OK, millis() = 805
 Time = 10001, Timer0Count = 18, , Timer1Count = 4
