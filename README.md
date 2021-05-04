@@ -17,6 +17,7 @@
   * [Currently supported Boards](#currently-supported-boards)
   * [Important Notes about ISR](#important-notes-about-isr)
 * [Changelog](#changelog)
+  * [Releases v1.2.1](#releases-v121)
   * [Releases v1.2.0](#releases-v120)
   * [Releases v1.1.1](#releases-v111)
   * [Releases v1.0.2](#releases-v102)
@@ -128,9 +129,31 @@ The catch is **your function is now part of an ISR (Interrupt Service Routine), 
 2. Typically global variables are used to pass data between an ISR and the main program. To make sure variables shared between an ISR and the main program are updated correctly, declare them as volatile.
 
 ---
+
+### Notes for recent 2.0.0 release of Arduino Mbed OS Boards platform
+
+From [Add mbed_nano to list of compatible architectures #3](https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt/pull/3)
+
+```
+In the recent 2.0.0 release of the Arduino Mbed OS Boards platform, the mbed architecture split into four architectures:
+
+mbed_edge: Arduino Edge Control
+mbed_nano: Nano 33 BLE and Nano RP2040 Connect
+mbed_rp2040: Raspberry Pi Pico
+mbed_portenta: Portenta H7
+
+The mbed architecture should be retained for backwards support, but the new mbed_nano should also be added to avoid spurious incompatibility warnings and the library's examples being shown under the File > Examples > INCOMPATIBLE menu of the Arduino IDE when the Nano 33 BLE board is selected.
+```
+
+---
 ---
 
 ## Changelog
+
+### Releases v1.2.1
+
+1. Add **mbed_nano** to list of compatible architectures. For more info, Check [Add mbed_nano to list of compatible architectures #3](https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt/pull/3).
+
 
 ### Releases v1.2.0
 
@@ -829,7 +852,7 @@ While software timer, **programmed for 2s, is activated after more than 3.000s i
 
 ```
 Starting ISR_16_Timers_Array_Complex on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.2.0
+NRF52_MBED_TimerInterrupt v1.2.1
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 10000
 Starting  ITimer OK, millis() = 714
@@ -1303,7 +1326,7 @@ The following is the sample terminal output when running example [**TimerInterru
 
 ```
 Starting TimerInterruptTest on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.2.0
+NRF52_MBED_TimerInterrupt v1.2.1
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 1000000
 Starting  ITimer0 OK, millis() = 5660
@@ -1336,7 +1359,7 @@ The following is the sample terminal output when running example [**Argument_Non
 
 ```
 Starting Argument_None on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.2.0
+NRF52_MBED_TimerInterrupt v1.2.1
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER1
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 500000
 Starting  ITimer0 OK, millis() = 1519
@@ -1364,7 +1387,7 @@ The following is the sample terminal output when running example [FakeAnalogWrit
 
 ```
 Starting FakeAnalogWrite on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.2.0
+NRF52_MBED_TimerInterrupt v1.2.1
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 100
 Starting  ITimer OK, millis() = 1811
@@ -1527,6 +1550,10 @@ Sometimes, the library will only work if you update the board core to the latest
 
 ## Releases
 
+### Releases v1.2.1
+
+1. Add **mbed_nano** to list of compatible architectures. For more info, Check PR [Add mbed_nano to list of compatible architectures #3](https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt/pull/3).
+
 ### Releases v1.2.0
 
 1. Add better debug feature.
@@ -1574,6 +1601,7 @@ Submit issues to: [NRF52_MBED_TimerInterrupt issues](https://github.com/khoih-pr
 3. Longer time interval
 4. Similar features for remaining Arduino boards such as AVR, ESP32, ESP8266, STM32, SAM-DUE, SAMD21/SAMD51, nRF52, Teensy, etc.
 5. Add Table of Contents
+6. Add new **mbed_nano** to list of compatible architectures.
 
 ---
 ---
@@ -1582,6 +1610,13 @@ Submit issues to: [NRF52_MBED_TimerInterrupt issues](https://github.com/khoih-pr
 
 Many thanks for everyone for bug reporting, new feature suggesting, testing and contributing to the development of this library.
 
+1. Thanks to [per1234](https://github.com/per1234) to make PR in [Add mbed_nano to list of compatible architectures #3](https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt/pull/3) leading to the new version v1.2.1 to add new **mbed_nano** to list of compatible architectures.
+
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/per1234"><img src="https://github.com/per1234.png" width="100px;" alt="per1234"/><br /><sub><b>per1234</b></sub></a><br /></td>
+  </tr> 
+</table>
 
 ---
 
