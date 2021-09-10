@@ -160,7 +160,7 @@ The mbed architecture should be retained for backwards support, but the new mbed
 ## Prerequisites
 
  1. [`Arduino IDE 1.8.16+` for Arduino](https://www.arduino.cc/en/Main/Software)
- 2. [`Arduino mbed core v1.3.2-`](https://github.com/arduino/ArduinoCore-mbed) for NRF52-based board using mbed-RTOS such as Nano-33-BLE if you'd like to use `NRF_TIMER_1`. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/release s/latest)
+ 2. [`Arduino mbed core v1.3.2-`](https://github.com/arduino/ArduinoCore-mbed) for NRF52-based board using mbed-RTOS such as Nano-33-BLE if you'd like to use `NRF_TIMER_1`. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
  3. [`Arduino mbed_nano core 2.4.1+`](https://github.com/arduino/ArduinoCore-mbed) for NRF52-based board using mbed-RTOS such as Nano-33-BLE if you don't use `NRF_TIMER_1`. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
  4. To use with certain examples
    - [`SimpleTimer library`](https://github.com/jfturcot/SimpleTimer) for [ISR_16_Timers_Array example](examples/ISR_16_Timers_Array).
