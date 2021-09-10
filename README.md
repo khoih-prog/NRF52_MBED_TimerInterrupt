@@ -14,14 +14,9 @@
 * [Why do we need this NRF52_MBED_TimerInterrupt library](#why-do-we-need-this-nrf52_mbed_timerinterrupt-library)
   * [Features](#features)
   * [Why using ISR-based Hardware Timer Interrupt is better](#why-using-isr-based-hardware-timer-interrupt-is-better)
+  * [Important notes about NRF_TIMER_1](#important-notes-about-nrf_timer_1)
   * [Currently supported Boards](#currently-supported-boards)
   * [Important Notes about ISR](#important-notes-about-isr)
-* [Changelog](#changelog)
-  * [Releases v1.2.1](#releases-v121)
-  * [Releases v1.2.0](#releases-v120)
-  * [Releases v1.1.1](#releases-v111)
-  * [Releases v1.0.2](#releases-v102)
-  * [Releases v1.0.1](#releases-v101)
 * [Prerequisites](#prerequisites)
 * [Installation](#installation)
   * [Use Arduino Library Manager](#use-arduino-library-manager)
@@ -63,7 +58,6 @@
   * [5. Change_Interval on Arduino Nano_33_BLE](#5-change_interval-on-arduino-nano_33_ble)
 * [Debug](#debug)
 * [Troubleshooting](#troubleshooting)
-* [Releases](#releases)
 * [Issues](#issues)
 * [TO DO](#to-do)
 * [DONE](#done)
@@ -114,6 +108,21 @@ The catch is **your function is now part of an ISR (Interrupt Service Routine), 
 
 [**HOWTO Attach Interrupt**](https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/)
 
+
+### Important notes about NRF_TIMER_1
+
+- Starting from core mbed_nano core v2.0.0+, NRF_TIMER_1 stops working. 
+
+```
+// For core mbed core 1.3.2-
+// Depending on the board, you can select NRF52 Hardware Timer from NRF_TIMER_1,NRF_TIMER_3,NRF_TIMER_4 (1,3 and 4)
+// If you select the already-used NRF_TIMER_0 or NRF_TIMER_2, it'll be auto modified to use NRF_TIMER_1
+
+// For core mbed core 2.0.0-
+// Depending on the board, you can select NRF52 Hardware Timer from NRF_TIMER_3,NRF_TIMER_4 (3 and 4)
+// If you select the already-used NRF_TIMER_0, NRF_TIMER_1 or NRF_TIMER_2, it'll be auto modified to use NRF_TIMER_3
+```
+
 ---
 
 ### Currently supported Boards
@@ -148,42 +157,13 @@ The mbed architecture should be retained for backwards support, but the new mbed
 ---
 ---
 
-## Changelog
-
-### Releases v1.2.1
-
-1. Add **mbed_nano** to list of compatible architectures. For more info, Check [Add mbed_nano to list of compatible architectures #3](https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt/pull/3).
-
-
-### Releases v1.2.0
-
-1. Add better debug feature.
-2. Optimize code and examples to reduce RAM usage
-3. Add Table of Contents
-
-### Releases v1.1.1
-
-1. Add example [**Change_Interval**](examples/Change_Interval)
-2. Bump up version to sync with other TimerInterrupt Libraries. Modify Version String.
-
-### Releases v1.0.2
-
-1. Add example [**ISR_16_Timers_Array_Complex**](examples/ISR_16_Timers_Array_Complex) and optimize example [**ISR_16_Timers_Array**](examples/ISR_16_Timers_Array)
-
-### Releases v1.0.1
-
-1. Initial coding for Nano-33-BLE and sync with [**NRF52_TimerInterrupt Library**](https://github.com/khoih-prog/NRF52_TimerInterrupt)
-
-
----
----
-
 ## Prerequisites
 
- 1. [`Arduino IDE 1.8.13+` for Arduino](https://www.arduino.cc/en/Main/Software)
- 2. [`Arduino mbed core v1.3.2+`](https://github.com/arduino/ArduinoCore-mbed) for NRF52-based board using mbed-RTOS such as Nano-33-BLE. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
- 3. To use with certain examples
-   - [`SimpleTimer library`](https://github.com/schinken/SimpleTimer) for [ISR_16_Timers_Array example](examples/ISR_16_Timers_Array).
+ 1. [`Arduino IDE 1.8.16+` for Arduino](https://www.arduino.cc/en/Main/Software)
+ 2. [`Arduino mbed core v1.3.2-`](https://github.com/arduino/ArduinoCore-mbed) for NRF52-based board using mbed-RTOS such as Nano-33-BLE if you'd like to use `NRF_TIMER_1`. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/release s/latest)
+ 3. [`Arduino mbed_nano core 2.4.1+`](https://github.com/arduino/ArduinoCore-mbed) for NRF52-based board using mbed-RTOS such as Nano-33-BLE if you don't use `NRF_TIMER_1`. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
+ 4. To use with certain examples
+   - [`SimpleTimer library`](https://github.com/jfturcot/SimpleTimer) for [ISR_16_Timers_Array example](examples/ISR_16_Timers_Array).
    
 ---
 ---
@@ -329,8 +309,13 @@ Before using any Timer, you have to make sure the Timer has not been used by any
 #### 1.1 Init Hardware Timer
 
 ```
+// For core mbed core 1.3.2-
 // Depending on the board, you can select NRF52 Hardware Timer from NRF_TIMER_1,NRF_TIMER_3,NRF_TIMER_4 (1,3 and 4)
 // If you select the already-used NRF_TIMER_0 or NRF_TIMER_2, it'll be auto modified to use NRF_TIMER_1
+
+// For core mbed core 2.0.0-
+// Depending on the board, you can select NRF52 Hardware Timer from NRF_TIMER_3,NRF_TIMER_4 (3 and 4)
+// If you select the already-used NRF_TIMER_0, NRF_TIMER_1 or NRF_TIMER_2, it'll be auto modified to use NRF_TIMER_3
 
 // Init NRF52 timer NRF_TIMER3
 NRF52_MBED_Timer ITimer(NRF_TIMER_3);
@@ -421,8 +406,13 @@ The 16 ISR_based Timers, designed for long timer intervals, only support using *
 ### 2.2 Init Hardware Timer and ISR-based Timer
 
 ```
+// For core mbed core 1.3.2-
 // Depending on the board, you can select NRF52 Hardware Timer from NRF_TIMER_1,NRF_TIMER_3,NRF_TIMER_4 (1,3 and 4)
 // If you select the already-used NRF_TIMER_0 or NRF_TIMER_2, it'll be auto modified to use NRF_TIMER_1
+
+// For core mbed core 2.0.0-
+// Depending on the board, you can select NRF52 Hardware Timer from NRF_TIMER_3,NRF_TIMER_4 (3 and 4)
+// If you select the already-used NRF_TIMER_0, NRF_TIMER_1 or NRF_TIMER_2, it'll be auto modified to use NRF_TIMER_3
 
 // Init NRF52 timer NRF_TIMER3
 NRF52_MBED_Timer ITimer(NRF_TIMER_3);
@@ -545,8 +535,13 @@ void setup()
 
 volatile uint32_t startMillis = 0;
 
+// For core mbed core 1.3.2-
 // Depending on the board, you can select NRF52 Hardware Timer from NRF_TIMER_1,NRF_TIMER_3,NRF_TIMER_4 (1,3 and 4)
 // If you select the already-used NRF_TIMER_0 or NRF_TIMER_2, it'll be auto modified to use NRF_TIMER_1
+
+// For core mbed core 2.0.0-
+// Depending on the board, you can select NRF52 Hardware Timer from NRF_TIMER_3,NRF_TIMER_4 (3 and 4)
+// If you select the already-used NRF_TIMER_0, NRF_TIMER_1 or NRF_TIMER_2, it'll be auto modified to use NRF_TIMER_3
 
 // Init NRF52 timer NRF_TIMER3
 NRF52_MBED_Timer ITimer(NRF_TIMER_3);
@@ -852,7 +847,7 @@ While software timer, **programmed for 2s, is activated after more than 3.000s i
 
 ```
 Starting ISR_16_Timers_Array_Complex on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.2.1
+NRF52_MBED_TimerInterrupt v1.3.0
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 10000
 Starting  ITimer OK, millis() = 714
@@ -1326,7 +1321,7 @@ The following is the sample terminal output when running example [**TimerInterru
 
 ```
 Starting TimerInterruptTest on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.2.1
+NRF52_MBED_TimerInterrupt v1.3.0
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 1000000
 Starting  ITimer0 OK, millis() = 5660
@@ -1359,7 +1354,7 @@ The following is the sample terminal output when running example [**Argument_Non
 
 ```
 Starting Argument_None on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.2.1
+NRF52_MBED_TimerInterrupt v1.3.0
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER1
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 500000
 Starting  ITimer0 OK, millis() = 1519
@@ -1387,7 +1382,7 @@ The following is the sample terminal output when running example [FakeAnalogWrit
 
 ```
 Starting FakeAnalogWrite on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.2.1
+NRF52_MBED_TimerInterrupt v1.3.0
 NRF52_MBED_TimerInterrupt: Timer = NRF_TIMER3
 NRF52_MBED_TimerInterrupt: _fre = 1000000.00, _count = 100
 Starting  ITimer OK, millis() = 1811
@@ -1492,7 +1487,7 @@ The following is the sample terminal output when running example [Change_Interva
 
 ```
 Starting Change_Interval on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.2.1
+NRF52_MBED_TimerInterrupt v1.3.0
 Starting  ITimer0 OK, millis() = 801
 Starting  ITimer1 OK, millis() = 805
 Time = 10001, Timer0Count = 18, , Timer1Count = 4
@@ -1546,33 +1541,6 @@ If you get compilation errors, more often than not, you may need to install a ne
 Sometimes, the library will only work if you update the board core to the latest version because I am using newly added functions.
 
 ---
----
-
-## Releases
-
-### Releases v1.2.1
-
-1. Add **mbed_nano** to list of compatible architectures. For more info, Check PR [Add mbed_nano to list of compatible architectures #3](https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt/pull/3).
-
-### Releases v1.2.0
-
-1. Add better debug feature.
-2. Optimize code and examples to reduce RAM usage
-3. Add Table of Contents
-
-### Releases v1.1.1
-
-1. Add example [**Change_Interval**](examples/Change_Interval)
-2. Bump up version to sync with other TimerInterrupt Libraries. Modify Version String.
-
-### Releases v1.0.2
-
-1. Add example [ISR_16_Timers_Array_Complex](examples/ISR_16_Timers_Array_Complex) and optimize example [ISR_16_Timers_Array](examples/ISR_16_Timers_Array)
-
-### Releases v1.0.1
-
-1. Initial coding for Nano-33-BLE and sync with [**NRF52_TimerInterrupt Library**](https://github.com/khoih-prog/NRF52_TimerInterrupt)
-
 ---
 
 #### Supported Boards

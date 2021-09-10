@@ -19,7 +19,7 @@
   Based on BlynkTimer.h
   Author: Volodymyr Shymanskyy
 
-  Version: 1.2.1
+  Version: 1.3.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -28,6 +28,7 @@
   1.1.1   K.Hoang      06/12/2020 Add Change_Interval example. Bump up version to sync with other TimerInterrupt Libraries
   1.2.0   K.Hoang      11/01/2021 Add better debug feature. Optimize code and examples to reduce RAM usage
   1.2.1   K.Hoang      04/05/2021 Add mbed_nano to list of compatible architectures
+  1.3.0   K.Hoang      09/09/2021 Don't use NRF_TIMER_1 because of mbed_nano core v2.0.0+
 *****************************************************************************************************************************/
 /*
   nRF52 has 5 Hardware TIMERs: NRF_TIMER0-NRF_TIMER4
@@ -83,7 +84,7 @@
 #include "hal/nrf_timer.h"
 
 #ifndef NRF52_MBED_TIMER_INTERRUPT_VERSION
-  #define NRF52_MBED_TIMER_INTERRUPT_VERSION       "NRF52_MBED_TimerInterrupt v1.2.1"
+  #define NRF52_MBED_TIMER_INTERRUPT_VERSION       "NRF52_MBED_TimerInterrupt v1.3.0"
 #endif
 
 #include "TimerInterrupt_Generic_Debug.h"
@@ -164,9 +165,9 @@ NRF52_MBED_TimerInterrupt*  nRF52Timers [NRF_MAX_TIMER] = { NULL, NULL, NULL, NU
 class NRF52_MBED_TimerInterrupt
 {
   private:
-    uint8_t               _timer       = NRF_TIMER_1;
+    uint8_t               _timer       = NRF_TIMER_3;
     
-    NRF_TIMER_Type*        nrf_timer  = NRF_TIMER1;
+    NRF_TIMER_Type*        nrf_timer  = NRF_TIMER3;
     nrf_timer_cc_channel_t cc_channel = NRF_TIMER_CC_CHANNEL0;
     
     IRQn_Type              _timer_IRQ;
@@ -180,14 +181,14 @@ class NRF52_MBED_TimerInterrupt
 
   public:
 
-    NRF52_MBED_TimerInterrupt(uint8_t timer = NRF_TIMER_1)
+    NRF52_MBED_TimerInterrupt(uint8_t timer = NRF_TIMER_3)
     {
-      // KH, force to use NRF_TIMER1 if accidentally select already used
+      // KH, force to use NRF_TIMER3 if accidentally select already used
       // NRF_TIMER0
       // NRF_TIMER2 (reserved by mbed RTOS)
       // To store to know which to delete in destructor
-      if ( (timer == NRF_TIMER_0) || (timer == NRF_TIMER_2) )
-        _timer = NRF_TIMER_1;
+      if ( (timer == NRF_TIMER_0) || (timer == NRF_TIMER_1) || (timer == NRF_TIMER_2) )
+        _timer = NRF_TIMER_3;
       else
         _timer = timer;
       

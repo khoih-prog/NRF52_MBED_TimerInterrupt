@@ -14,8 +14,8 @@ If you don't find anything, please [open a new issue](https://github.com/khoih-p
 
 Please ensure to specify the following:
 
-* Arduino IDE version (e.g. 1.8.13) or Platform.io version
-* Arduino `mbed` Core Version (e.g. Arduino `mbed` core v1.3.0)
+* Arduino IDE version (e.g. 1.8.16) or Platform.io version
+* Arduino `mbed` Core Version (e.g. Arduino `mbed` core v1.3.2 or Arduino `mbed_nano` core v2.4.1 )
 * Contextual information (e.g. what you were trying to achieve)
 * Simplest possible steps to reproduce
 * Anything that might be relevant in your opinion, such as:
@@ -26,10 +26,10 @@ Please ensure to specify the following:
 ### Example
 
 ```
-Arduino IDE version: 1.8.13
-Arduino mbed Core Version 1.3.0
+Arduino IDE version: 1.8.16
+Arduino mbed_nano` core v2.4.1
 OS: Ubuntu 20.04 LTS
-Linux xy-Inspiron-3593 5.4.0-51-generic #56-Ubuntu SMP Mon Oct 5 14:28:49 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
+Linux xy-Inspiron-3593 5.4.0-84-generic #94-Ubuntu SMP Thu Aug 26 20:27:37 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
 
 Context:
 I encountered a crash while trying to use the Timer Interrupt.
@@ -40,6 +40,7 @@ Steps to reproduce:
 3. ...
 4. ...
 ```
+
 ### Sending Feature Requests
 
 Feel free to post feature requests. It's helpful if you can explain exactly why the feature would be useful.
