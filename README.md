@@ -1579,10 +1579,13 @@ Submit issues to: [NRF52_MBED_TimerInterrupt issues](https://github.com/khoih-pr
 Many thanks for everyone for bug reporting, new feature suggesting, testing and contributing to the development of this library.
 
 1. Thanks to [per1234](https://github.com/per1234) to make PR in [Add mbed_nano to list of compatible architectures #3](https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt/pull/3) leading to the new version v1.2.1 to add new **mbed_nano** to list of compatible architectures.
+2. Thanks to [cattledogGH](https://github.com/cattledogGH) to report issue in [Nano 33 BLE will not run library examples using NRF_TIMER_1 #6](https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt/issues/6) leading to the new version v1.3.0 to not use `NRF_TIMER_1` because of [ArduinoCore-mbed mbed_nano core v2.0.0+](https://github.com/arduino/ArduinoCore-mbed)
+
 
 <table>
   <tr>
     <td align="center"><a href="https://github.com/per1234"><img src="https://github.com/per1234.png" width="100px;" alt="per1234"/><br /><sub><b>per1234</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/cattledogGH"><img src="https://github.com/cattledogGH.png" width="100px;" alt="cattledogGH"/><br /><sub><b>cattledogGH</b></sub></a><br /></td>
   </tr> 
 </table>
 
