@@ -19,7 +19,7 @@
   Based on BlynkTimer.h
   Author: Volodymyr Shymanskyy
 
-  Version: 1.3.0
+  Version: 1.4.0
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -29,6 +29,7 @@
   1.2.0   K.Hoang      11/01/2021 Add better debug feature. Optimize code and examples to reduce RAM usage
   1.2.1   K.Hoang      04/05/2021 Add mbed_nano to list of compatible architectures
   1.3.0   K.Hoang      09/09/2021 Don't use NRF_TIMER_1 because of mbed_nano core v2.0.0+
+  1.4.0   K.Hoang      22/01/2022 Fix `multiple-definitions` linker error. Fix bug
 *****************************************************************************************************************************/
 
 #pragma once
@@ -150,7 +151,7 @@ int NRF52_MBED_ISR_Timer::findFirstFreeSlot()
 }
 
 
-int NRF52_MBED_ISR_Timer::setupTimer(unsigned long d, void* f, void* p, bool h, unsigned n) 
+int NRF52_MBED_ISR_Timer::setupTimer(const unsigned long& d, void* f, void* p, bool h, const unsigned& n) 
 {
   int freeTimer;
 
@@ -184,37 +185,37 @@ int NRF52_MBED_ISR_Timer::setupTimer(unsigned long d, void* f, void* p, bool h, 
 }
 
 
-int NRF52_MBED_ISR_Timer::setTimer(unsigned long d, timerCallback f, unsigned n) 
+int NRF52_MBED_ISR_Timer::setTimer(const unsigned long& d, timerCallback f, const unsigned& n) 
 {
   return setupTimer(d, (void *)f, NULL, false, n);
 }
 
-int NRF52_MBED_ISR_Timer::setTimer(unsigned long d, timerCallback_p f, void* p, unsigned n) 
+int NRF52_MBED_ISR_Timer::setTimer(const unsigned long& d, timerCallback_p f, void* p, const unsigned& n) 
 {
   return setupTimer(d, (void *)f, p, true, n);
 }
 
-int NRF52_MBED_ISR_Timer::setInterval(unsigned long d, timerCallback f) 
+int NRF52_MBED_ISR_Timer::setInterval(const unsigned long& d, timerCallback f) 
 {
   return setupTimer(d, (void *)f, NULL, false, TIMER_RUN_FOREVER);
 }
 
-int NRF52_MBED_ISR_Timer::setInterval(unsigned long d, timerCallback_p f, void* p) 
+int NRF52_MBED_ISR_Timer::setInterval(const unsigned long& d, timerCallback_p f, void* p) 
 {
   return setupTimer(d, (void *)f, p, true, TIMER_RUN_FOREVER);
 }
 
-int NRF52_MBED_ISR_Timer::setTimeout(unsigned long d, timerCallback f) 
+int NRF52_MBED_ISR_Timer::setTimeout(const unsigned long& d, timerCallback f) 
 {
   return setupTimer(d, (void *)f, NULL, false, TIMER_RUN_ONCE);
 }
 
-int NRF52_MBED_ISR_Timer::setTimeout(unsigned long d, timerCallback_p f, void* p) 
+int NRF52_MBED_ISR_Timer::setTimeout(const unsigned long& d, timerCallback_p f, void* p) 
 {
   return setupTimer(d, (void *)f, p, true, TIMER_RUN_ONCE);
 }
 
-bool NRF52_MBED_ISR_Timer::changeInterval(unsigned numTimer, unsigned long d) 
+bool NRF52_MBED_ISR_Timer::changeInterval(const unsigned& numTimer, const unsigned long& d) 
 {
   if (numTimer >= MAX_NUMBER_TIMERS) 
   {
@@ -234,7 +235,7 @@ bool NRF52_MBED_ISR_Timer::changeInterval(unsigned numTimer, unsigned long d)
   return false;
 }
 
-void NRF52_MBED_ISR_Timer::deleteTimer(unsigned timerId) 
+void NRF52_MBED_ISR_Timer::deleteTimer(const unsigned& timerId) 
 {
   if (timerId >= MAX_NUMBER_TIMERS) 
   {
@@ -259,7 +260,7 @@ void NRF52_MBED_ISR_Timer::deleteTimer(unsigned timerId)
 }
 
 // function contributed by code@rowansimms.com
-void NRF52_MBED_ISR_Timer::restartTimer(unsigned numTimer) 
+void NRF52_MBED_ISR_Timer::restartTimer(const unsigned& numTimer) 
 {
   if (numTimer >= MAX_NUMBER_TIMERS) 
   {
@@ -270,7 +271,7 @@ void NRF52_MBED_ISR_Timer::restartTimer(unsigned numTimer)
 }
 
 
-bool NRF52_MBED_ISR_Timer::isEnabled(unsigned numTimer) 
+bool NRF52_MBED_ISR_Timer::isEnabled(const unsigned& numTimer) 
 {
   if (numTimer >= MAX_NUMBER_TIMERS) 
   {
@@ -281,7 +282,7 @@ bool NRF52_MBED_ISR_Timer::isEnabled(unsigned numTimer)
 }
 
 
-void NRF52_MBED_ISR_Timer::enable(unsigned numTimer) 
+void NRF52_MBED_ISR_Timer::enable(const unsigned& numTimer) 
 {
   if (numTimer >= MAX_NUMBER_TIMERS) 
   {
@@ -292,7 +293,7 @@ void NRF52_MBED_ISR_Timer::enable(unsigned numTimer)
 }
 
 
-void NRF52_MBED_ISR_Timer::disable(unsigned numTimer) 
+void NRF52_MBED_ISR_Timer::disable(const unsigned& numTimer) 
 {
   if (numTimer >= MAX_NUMBER_TIMERS) 
   {
@@ -328,7 +329,7 @@ void NRF52_MBED_ISR_Timer::disableAll()
   }
 }
 
-void NRF52_MBED_ISR_Timer::toggle(unsigned numTimer) 
+void NRF52_MBED_ISR_Timer::toggle(const unsigned& numTimer) 
 {
   if (numTimer >= MAX_NUMBER_TIMERS) 
   {

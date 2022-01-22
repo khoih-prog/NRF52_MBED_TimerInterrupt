@@ -1,5 +1,5 @@
 /****************************************************************************************************************************
-  NRF52_MBED_ISR_Timer.hpp
+  NRF52_MBED_TimerInterrupt.h
   For NRF52 boards using mbed-RTOS such as Nano-33-BLE
   Written by Khoi Hoang
 
@@ -29,16 +29,51 @@
   1.2.0   K.Hoang      11/01/2021 Add better debug feature. Optimize code and examples to reduce RAM usage
   1.2.1   K.Hoang      04/05/2021 Add mbed_nano to list of compatible architectures
   1.3.0   K.Hoang      09/09/2021 Don't use NRF_TIMER_1 because of mbed_nano core v2.0.0+
-  1.4.0   K.Hoang      22/01/2022 Fix `multiple-definitions` linker error
+  1.4.0   K.Hoang      22/01/2022 Fix `multiple-definitions` linker error. Fix bug
 *****************************************************************************************************************************/
 
 #pragma once
 
-#ifndef ISR_TIMER_GENERIC_HPP
-#define ISR_TIMER_GENERIC_HPP
+#ifndef NRF52_MBED_TIMERINTERRUPT_IMPL_H
+#define NRF52_MBED_TIMERINTERRUPT_IMPL_H
 
-#include "NRF52_MBED_ISR_Timer.hpp"
-#include "NRF52_MBED_ISR_Timer-Impl.h"
+// Timer 0 is used by the soft device
+// Timer 2 is used by the mbed-RTOS
+// only Timer 1, 3 and 4 are available
+extern "C" void TIMER1_IRQHandler_v()
+{
+  if (nRF52Timers[1]) 
+  {
+    nRF52Timers[1]->detachInterrupt();
+    
+    (*(nRF52Timers[1]->getCallback()))();
+    
+    nRF52Timers[1]->enableTimer();
+  }
+}
 
-#endif    // ISR_TIMER_GENERIC_HPP
+extern "C" void TIMER3_IRQHandler_v() 
+{
+  if (nRF52Timers[3]) 
+  {
+    nRF52Timers[3]->detachInterrupt();
+    
+    (*(nRF52Timers[3]->getCallback()))();
+    
+    nRF52Timers[3]->enableTimer();
+  }
+}
 
+extern "C" void TIMER4_IRQHandler_v() 
+{
+  if (nRF52Timers[4]) 
+  {
+    nRF52Timers[4]->detachInterrupt();
+    
+    (*(nRF52Timers[4]->getCallback()))();
+    
+    nRF52Timers[4]->enableTimer();
+  }
+}
+
+#endif    // NRF52_MBED_TIMERINTERRUPT_IMPL_H

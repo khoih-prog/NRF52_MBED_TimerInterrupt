@@ -12,6 +12,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Releases v1.4.0](#releases-v140)
   * [Releases v1.3.0](#releases-v130)
   * [Releases v1.2.1](#releases-v121)
   * [Releases v1.2.0](#releases-v120)
@@ -23,6 +24,14 @@
 ---
 
 ## Changelog
+
+### Releases v1.4.0
+
+1. Fix `multiple-definitions` linker error. Drop `src_cpp` and `src_h` directories
+2. Add example [multiFileProject](examples/multiFileProject) to demo for multiple-file project.
+3. Fix `reattachInterrupt()` bug. Check [bugfix: reattachInterrupt() pass wrong frequency value to setFrequency() #19](https://github.com/khoih-prog/ESP8266TimerInterrupt/pull/19)
+4. Optimize library code by using `reference-passing` instead of `value-passing`
+5. Update all examples
 
 ### Releases v1.3.0
 
