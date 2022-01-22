@@ -1,5 +1,5 @@
 /****************************************************************************************************************************
-  NRF52_MBED_ISR_Timer.h
+  NRF52_MBED_ISR_Timer.hpp
   For NRF52 boards using mbed-RTOS such as Nano-33-BLE
   Written by Khoi Hoang
 

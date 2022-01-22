@@ -1,5 +1,5 @@
 /****************************************************************************************************************************
-  NRF52_MBED_TimerInterrupt.h
+  NRF52_MBED_TimerInterrupt.hpp
   For NRF52 boards using mbed-RTOS such as Nano-33-BLE
   Written by Khoi Hoang
 
