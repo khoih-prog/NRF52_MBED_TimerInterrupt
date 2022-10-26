@@ -6,7 +6,8 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](#Contributing)
 [![GitHub issues](https://img.shields.io/github/issues/khoih-prog/NRF52_MBED_TimerInterrupt.svg)](http://github.com/khoih-prog/NRF52_MBED_TimerInterrupt/issues)
 
-<a href="https://www.buymeacoffee.com/khoihprog6" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 50px !important;width: 181px !important;" ></a>
+<a href="https://www.buymeacoffee.com/khoihprog6" title="Donate to my libraries using BuyMeACoffee"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Donate to my libraries using BuyMeACoffee" style="height: 50px !important;width: 181px !important;" ></a>
+<a href="https://www.buymeacoffee.com/khoihprog6" title="Donate to my libraries using BuyMeACoffee"><img src="https://img.shields.io/badge/buy%20me%20a%20coffee-donate-orange.svg?logo=buy-me-a-coffee&logoColor=FFDD00" style="height: 20px !important;width: 200px !important;" ></a>
 
 ---
 ---
@@ -120,9 +121,9 @@ The catch is **your function is now part of an ISR (Interrupt Service Routine), 
 
 ### Important notes about NRF_TIMER_1
 
-- Starting from core mbed_nano core v2.0.0+, NRF_TIMER_1 stops working. 
+- Starting from core `mbed_nano` core v2.0.0+, `NRF_TIMER_1` stops working. 
 
-```
+```cpp
 // For core mbed core 1.3.2-
 // Depending on the board, you can select NRF52 Hardware Timer from NRF_TIMER_1,NRF_TIMER_3,NRF_TIMER_4 (1,3 and 4)
 // If you select the already-used NRF_TIMER_0 or NRF_TIMER_2, it'll be auto modified to use NRF_TIMER_1
@@ -136,7 +137,8 @@ The catch is **your function is now part of an ISR (Interrupt Service Routine), 
 
 ### Currently supported Boards
 
-  - **Arduino Nano-33-BLE** using [`Arduino mbed core`](https://github.com/arduino/ArduinoCore-mbed)
+1. **MBED nRF52840-based boards such as Nano_33_BLE, Nano_33_BLE_Sense**, etc. using [**Arduino-mbed mbed_nano** core](https://github.com/arduino/ArduinoCore-mbed)
+2. **Seeeduino nRF52840-based boards such as SEEED_XIAO_NRF52840 and SEEED_XIAO_NRF52840_SENSE**, etc. using Seeeduino `mbed` core
 
 ---
 
@@ -152,7 +154,7 @@ The catch is **your function is now part of an ISR (Interrupt Service Routine), 
 
 From [Add mbed_nano to list of compatible architectures #3](https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt/pull/3)
 
-```
+```cpp
 In the recent 2.0.0 release of the Arduino Mbed OS Boards platform, the mbed architecture split into four architectures:
 
 mbed_edge: Arduino Edge Control
@@ -169,10 +171,12 @@ The mbed architecture should be retained for backwards support, but the new mbed
 ## Prerequisites
 
  1. [`Arduino IDE 1.8.19+` for Arduino](https://github.com/arduino/Arduino). [![GitHub release](https://img.shields.io/github/release/arduino/Arduino.svg)](https://github.com/arduino/Arduino/releases/latest)
- 2. [`Arduino mbed core v1.3.2-`](https://github.com/arduino/ArduinoCore-mbed) for NRF52-based board using mbed-RTOS such as Nano-33-BLE if you'd like to use `NRF_TIMER_1`. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
- 3. [`Arduino mbed_nano core 2.6.1+`](https://github.com/arduino/ArduinoCore-mbed) for NRF52-based board using mbed-RTOS such as Nano-33-BLE if you don't use `NRF_TIMER_1`. Latest release is [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
- 4. To use with certain examples
-   - [`SimpleTimer library`](https://github.com/jfturcot/SimpleTimer) for [ISR_16_Timers_Array](examples/ISR_16_Timers_Array) and [ISR_16_Timers_Array_Complex](examples/ISR_16_Timers_Array_Complex) examples.
+ 2. [`Arduino mbed_nano core 3.4.1+`](https://github.com/arduino/ArduinoCore-mbed) for NRF52-based board using mbed-RTOS such as Nano-33-BLE if you don't use `NRF_TIMER_1`. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
+ 3. [`Arduino mbed core v1.3.2-`](https://github.com/arduino/ArduinoCore-mbed/releases/tag/1.3.2) for NRF52-based board using mbed-RTOS such as Nano-33-BLE if you'd like to use `NRF_TIMER_1`. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
+ 4. `Seeeduino mbed core 2.7.2+` for Seeeduino nRF52840-based boards such as **SEEED_XIAO_NRF52840 and SEEED_XIAO_NRF52840_SENSE**
+ 
+ 5. To use with certain example
+   - [`SimpleTimer library`](https://github.com/jfturcot/SimpleTimer) for [ISR_16_PWMs_Array_Complex example](examples/ISR_16_PWMs_Array_Complex)
    
 ---
 ---
@@ -197,7 +201,7 @@ Another way to install is to:
 
 1. Install [VS Code](https://code.visualstudio.com/)
 2. Install [PlatformIO](https://platformio.org/platformio-ide)
-3. Install [**NRF52_MBED_TimerInterrupt** library](https://platformio.org/lib/show/11489/NRF52_MBED_TimerInterrupt) or [**NRF52_MBED_TimerInterrupt** library](https://platformio.org/lib/show/11539/NRF52_MBED_TimerInterrupt) by using [Library Manager](https://platformio.org/lib/show/11489/NRF52_MBED_TimerInterrupt/installation). Search for **NRF52_MBED_TimerInterrupt** in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
+3. Install [**NRF52_MBED_TimerInterrupt** library](https://registry.platformio.org/libraries/khoih-prog/NRF52_MBED_TimerInterrupt) by using [Library Manager](https://registry.platformio.org/libraries/khoih-prog/NRF52_MBED_TimerInterrupt/installation). Search for **NRF52_MBED_TimerInterrupt** in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
 4. Use included [platformio.ini](platformio/platformio.ini) file from examples to ensure that all dependent libraries will installed automatically. Please visit documentation for the other options and examples at [Project Configuration File](https://docs.platformio.org/page/projectconf.html)
 
 ---
@@ -276,7 +280,7 @@ The current library implementation, using `xyz-Impl.h` instead of standard `xyz.
 
 You can include these `.hpp` files
 
-```
+```cpp
 // Can be included as many times as necessary, without `Multiple Definitions` Linker Error
 #include "NRF52_MBED_TimerInterrupt.hpp"   //https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt
 
@@ -286,7 +290,7 @@ You can include these `.hpp` files
 
 in many files. But be sure to use the following `.h` files **in just 1 `.h`, `.cpp` or `.ino` file**, which must **not be included in any other file**, to avoid `Multiple Definitions` Linker Error
 
-```
+```cpp
 // To be included only in main(), .ino with setup() to avoid `Multiple Definitions` Linker Error
 #include "NRF52_MBED_TimerInterrupt.h"     //https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt
 
@@ -309,7 +313,7 @@ The [**ISR_16_Timers_Array**](examples/ISR_16_Timers_Array) example will demonst
 Being ISR-based timers, their executions are not blocked by bad-behaving functions / tasks, such as connecting to WiFi, Internet and Blynk services. You can also have many `(up to 16)` timers to use.
 This non-being-blocked important feature is absolutely necessary for mission-critical tasks. 
 You'll see blynkTimer Software is blocked while system is connecting to WiFi / Internet / Blynk, as well as by blocking task 
-in loop(), using delay() function as an example. The elapsed time then is very unaccurate
+in `loop()`, using `delay()` function as an example. The elapsed time then is very unaccurate
 
 ---
 ---
@@ -322,7 +326,7 @@ Before using any Timer, you have to make sure the Timer has not been used by any
 
 #### 1.1 Init Hardware Timer
 
-```
+```cpp
 // For core mbed core 1.3.2-
 // Depending on the board, you can select NRF52 Hardware Timer from NRF_TIMER_1,NRF_TIMER_3,NRF_TIMER_4 (1,3 and 4)
 // If you select the already-used NRF_TIMER_0 or NRF_TIMER_2, it'll be auto modified to use NRF_TIMER_1
@@ -339,7 +343,7 @@ NRF52_MBED_Timer ITimer(NRF_TIMER_3);
 
 Use one of these functions with **interval in unsigned long milliseconds**
 
-```
+```cpp
 // interval (in microseconds).
 // No params and duration now. To be added in the future by adding similar functions here or to NRF52-hal-timer.c
 bool setInterval(unsigned long interval, timerCallback callback);
@@ -351,7 +355,7 @@ bool attachInterruptInterval(unsigned long interval, timerCallback callback);
 
 as follows
 
-```
+```cpp
 void TimerHandler(void)
 {
   // Doing something here inside ISR
@@ -377,7 +381,7 @@ void setup()
 
 Use one of these functions with **frequency in float Hz**
 
-```
+```cpp
 // frequency (in hertz).
 // No params and duration now. To be added in the future by adding similar functions here or to NRF52-hal-timer.c
 bool setFrequency(float frequency, timerCallback callback);
@@ -388,7 +392,7 @@ bool attachInterrupt(float frequency, timerCallback callback);
 
 as follows
 
-```
+```cpp
 void TimerHandler0()
 {
   // Doing something here inside ISR
@@ -419,7 +423,7 @@ The 16 ISR_based Timers, designed for long timer intervals, only support using *
 
 ### 2.2 Init Hardware Timer and ISR-based Timer
 
-```
+```cpp
 // For core mbed core 1.3.2-
 // Depending on the board, you can select NRF52 Hardware Timer from NRF_TIMER_1,NRF_TIMER_3,NRF_TIMER_4 (1,3 and 4)
 // If you select the already-used NRF_TIMER_0 or NRF_TIMER_2, it'll be auto modified to use NRF_TIMER_1
@@ -438,7 +442,7 @@ NRF52_MBED_ISRTimer ISR_Timer;
 
 ### 2.3 Set Hardware Timer Interval and attach Timer Interrupt Handler functions
 
-```
+```cpp
 void TimerHandler(void)
 {
   ISR_Timer.run();
@@ -516,339 +520,8 @@ void setup()
 
 ### Example [ISR_16_Timers_Array_Complex](examples/ISR_16_Timers_Array_Complex)
 
-```
-#if !( ARDUINO_ARCH_NRF52840 && TARGET_NAME == ARDUINO_NANO33BLE )
-  #error This code is designed to run on nRF52-based Nano-33-BLE boards using mbed-RTOS platform! Please check your Tools->Board setting.
-#endif
+https://github.com/khoih-prog/NRF52_MBED_TimerInterrupt/blob/c302b0dc80d6e827ee7cd0513aa56df2d0adfa4f/examples/ISR_16_Timers_Array_Complex/ISR_16_Timers_Array_Complex.ino#L35-L387
 
-// These define's must be placed at the beginning before #include "NRF52TimerInterrupt.h"
-// _TIMERINTERRUPT_LOGLEVEL_ from 0 to 4
-// Don't define _TIMERINTERRUPT_LOGLEVEL_ > 0. Only for special ISR debugging only. Can hang the system.
-// For Nano33-BLE, don't use Serial.print() in ISR as system will definitely hang.
-#define TIMER_INTERRUPT_DEBUG         0
-#define _TIMERINTERRUPT_LOGLEVEL_     3
-
-#include "NRF52_MBED_TimerInterrupt.h"
-
-#include "NRF52_MBED_ISR_Timer.h"
-
-#include <SimpleTimer.h>              // https://github.com/jfturcot/SimpleTimer
-
-#ifndef LED_BUILTIN
-#define LED_BUILTIN       D13
-#endif
-
-#ifndef LED_BLUE
-#define LED_BLUE          D7
-#endif
-
-#ifndef LED_RED
-#define LED_RED           D8
-#endif
-
-#define HW_TIMER_INTERVAL_US      10000L
-
-volatile uint32_t startMillis = 0;
-
-// For core mbed core 1.3.2-
-// Depending on the board, you can select NRF52 Hardware Timer from NRF_TIMER_1,NRF_TIMER_3,NRF_TIMER_4 (1,3 and 4)
-// If you select the already-used NRF_TIMER_0 or NRF_TIMER_2, it'll be auto modified to use NRF_TIMER_1
-
-// For core mbed core 2.0.0-
-// Depending on the board, you can select NRF52 Hardware Timer from NRF_TIMER_3,NRF_TIMER_4 (3 and 4)
-// If you select the already-used NRF_TIMER_0, NRF_TIMER_1 or NRF_TIMER_2, it'll be auto modified to use NRF_TIMER_3
-
-// Init NRF52 timer NRF_TIMER3
-NRF52_MBED_Timer ITimer(NRF_TIMER_3);
-
-// Init NRF52_MBED_ISRTimer
-// Each NRF52_MBED_ISRTimer can service 16 different ISR-based timers
-NRF52_MBED_ISRTimer ISR_Timer;
-
-#define LED_TOGGLE_INTERVAL_MS        2000L
-
-void TimerHandler()
-{
-  static bool toggle  = false;
-  static int timeRun  = 0;
-
-  ISR_Timer.run();
-
-  // Toggle LED every LED_TOGGLE_INTERVAL_MS = 2000ms = 2s
-  if (++timeRun == ((LED_TOGGLE_INTERVAL_MS * 1000) / HW_TIMER_INTERVAL_US) )
-  {
-    timeRun = 0;
-
-    //timer interrupt toggles pin LED_BUILTIN
-    digitalWrite(LED_BUILTIN, toggle);
-    toggle = !toggle;
-  }
-}
-
-/////////////////////////////////////////////////
-
-#define NUMBER_ISR_TIMERS         16
-
-typedef void (*irqCallback)  ();
-
-/////////////////////////////////////////////////
-
-#define USE_COMPLEX_STRUCT      true
-
-#if USE_COMPLEX_STRUCT
-
-typedef struct
-{
-  irqCallback   irqCallbackFunc;
-  uint32_t      TimerInterval;
-  unsigned long deltaMillis;
-  unsigned long previousMillis;
-} ISRTimerData;
-
-// In NRF52, avoid doing something fancy in ISR, for example Serial.print()
-// The pure simple Serial.prints here are just for demonstration and testing. Must be eliminate in working environment
-// Or you can get this run-time error / crash
-
-void doingSomething(int index);
-
-#else
-
-volatile unsigned long deltaMillis    [NUMBER_ISR_TIMERS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-volatile unsigned long previousMillis [NUMBER_ISR_TIMERS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-// You can assign any interval for any timer here, in milliseconds
-uint32_t TimerInterval[NUMBER_ISR_TIMERS] =
-{
-  5000L,  10000L,  15000L,  20000L,  25000L,  30000L,  35000L,  40000L,
-  45000L, 50000L,  55000L,  60000L,  65000L,  70000L,  75000L,  80000L
-};
-
-void doingSomething(int index)
-{
-  unsigned long currentMillis  = millis();
-
-  deltaMillis[index]    = currentMillis - previousMillis[index];
-  previousMillis[index] = currentMillis;
-}
-
-#endif
-
-////////////////////////////////////
-// Shared
-////////////////////////////////////
-
-void doingSomething0()
-{
-  doingSomething(0);
-}
-
-void doingSomething1()
-{
-  doingSomething(1);
-}
-
-void doingSomething2()
-{
-  doingSomething(2);
-}
-
-void doingSomething3()
-{
-  doingSomething(3);
-}
-
-void doingSomething4()
-{
-  doingSomething(4);
-}
-
-void doingSomething5()
-{
-  doingSomething(5);
-}
-
-void doingSomething6()
-{
-  doingSomething(6);
-}
-
-void doingSomething7()
-{
-  doingSomething(7);
-}
-
-void doingSomething8()
-{
-  doingSomething(8);
-}
-
-void doingSomething9()
-{
-  doingSomething(9);
-}
-
-void doingSomething10()
-{
-  doingSomething(10);
-}
-
-void doingSomething11()
-{
-  doingSomething(11);
-}
-
-void doingSomething12()
-{
-  doingSomething(12);
-}
-
-void doingSomething13()
-{
-  doingSomething(13);
-}
-
-void doingSomething14()
-{
-  doingSomething(14);
-}
-
-void doingSomething15()
-{
-  doingSomething(15);
-}
-
-#if USE_COMPLEX_STRUCT
-
-ISRTimerData curISRTimerData[NUMBER_ISR_TIMERS] =
-{
-  //irqCallbackFunc, TimerInterval, deltaMillis, previousMillis
-  { doingSomething0,    5000L, 0, 0 },
-  { doingSomething1,   10000L, 0, 0 },
-  { doingSomething2,   15000L, 0, 0 },
-  { doingSomething3,   20000L, 0, 0 },
-  { doingSomething4,   25000L, 0, 0 },
-  { doingSomething5,   30000L, 0, 0 },
-  { doingSomething6,   35000L, 0, 0 },
-  { doingSomething7,   40000L, 0, 0 },
-  { doingSomething8,   45000L, 0, 0 },
-  { doingSomething9,   50000L, 0, 0 },
-  { doingSomething10,  55000L, 0, 0 },
-  { doingSomething11,  60000L, 0, 0 },
-  { doingSomething12,  65000L, 0, 0 },
-  { doingSomething13,  70000L, 0, 0 },
-  { doingSomething14,  75000L, 0, 0 },
-  { doingSomething15,  80000L, 0, 0 }
-};
-
-void doingSomething(int index)
-{
-  unsigned long currentMillis  = millis();
-
-  curISRTimerData[index].deltaMillis    = currentMillis - curISRTimerData[index].previousMillis;
-  curISRTimerData[index].previousMillis = currentMillis;
-}
-
-#else
-
-irqCallback irqCallbackFunc[NUMBER_ISR_TIMERS] =
-{
-  doingSomething0,  doingSomething1,  doingSomething2,  doingSomething3,
-  doingSomething4,  doingSomething5,  doingSomething6,  doingSomething7,
-  doingSomething8,  doingSomething9,  doingSomething10, doingSomething11,
-  doingSomething12, doingSomething13, doingSomething14, doingSomething15
-};
-
-#endif
-///////////////////////////////////////////
-
-#define SIMPLE_TIMER_MS        2000L
-
-// Init SimpleTimer
-SimpleTimer simpleTimer;
-
-// Here is software Timer, you can do somewhat fancy stuffs without many issues.
-// But always avoid
-// 1. Long delay() it just doing nothing and pain-without-gain wasting CPU power.Plan and design your code / strategy ahead
-// 2. Very long "do", "while", "for" loops without predetermined exit time.
-void simpleTimerDoingSomething2s()
-{
-  static unsigned long previousMillis = startMillis;
-
-  unsigned long currMillis = millis();
-
-  Serial.print(F("SimpleTimer : ")); Serial.print(SIMPLE_TIMER_MS / 1000);
-  Serial.print(F(", ms : ")); Serial.print(currMillis);
-  Serial.print(F(", Dms : ")); Serial.println(currMillis - previousMillis);
-
-  for (uint16_t i = 0; i < NUMBER_ISR_TIMERS; i++)
-  {
-#if USE_COMPLEX_STRUCT
-    Serial.print(F("Timer : ")); Serial.print(i);
-    Serial.print(F(", programmed : ")); Serial.print(curISRTimerData[i].TimerInterval);
-    Serial.print(F(", actual : ")); Serial.println(curISRTimerData[i].deltaMillis);
-#else
-    Serial.print(F("Timer : ")); Serial.print(i);
-    Serial.print(F(", programmed : ")); Serial.print(TimerInterval[i]);
-    Serial.print(F(", actual : ")); Serial.println(deltaMillis[i]);
-#endif
-  }
-
-  previousMillis = currMillis;
-}
-
-void setup()
-{
-  pinMode(LED_BUILTIN, OUTPUT);
-
-  Serial.begin(115200);
-  while (!Serial);
-
-  delay(100);
-
-  Serial.print(F("\nStarting ISR_16_Timers_Array_Complex on ")); Serial.println(BOARD_NAME);
-  Serial.println(NRF52_MBED_TIMER_INTERRUPT_VERSION);
-
-  // Interval in microsecs
-  if (ITimer.attachInterruptInterval(HW_TIMER_INTERVAL_US, TimerHandler))
-  {
-    startMillis = millis();
-    Serial.print(F("Starting ITimer OK, millis() = ")); Serial.println(startMillis);
-  }
-  else
-    Serial.println(F("Can't set ITimer. Select another freq. or interval"));
-
-  // Just to demonstrate, don't use too many ISR Timers if not absolutely necessary
-  // You can use up to 16 timer for each ISR_Timer
-  for (uint16_t i = 0; i < NUMBER_ISR_TIMERS; i++)
-  {
-#if USE_COMPLEX_STRUCT
-    curISRTimerData[i].previousMillis = startMillis;
-    ISR_Timer.setInterval(curISRTimerData[i].TimerInterval, curISRTimerData[i].irqCallbackFunc);
-#else
-    previousMillis[i] = startMillis;
-    ISR_Timer.setInterval(TimerInterval[i], irqCallbackFunc[i]);
-#endif
-  }
-
-  // You need this timer for non-critical tasks. Avoid abusing ISR if not absolutely necessary.
-  simpleTimer.setInterval(SIMPLE_TIMER_MS, simpleTimerDoingSomething2s);
-}
-
-#define BLOCKING_TIME_MS      3000L
-
-void loop()
-{
-  // This unadvised blocking task is used to demonstrate the blocking effects onto the execution and accuracy to Software timer
-  // You see the time elapse of ISR_Timer still accurate, whereas very unaccurate for Software Timer
-  // The time elapse for 2000ms software timer now becomes 3000ms (BLOCKING_TIME_MS)
-  // While that of ISR_Timer is still prefect.
-  delay(BLOCKING_TIME_MS);
-
-  // You need this Software timer for non-critical tasks. Avoid abusing ISR if not absolutely necessary
-  // You don't need to and never call ISR_Timer.run() here in the loop(). It's already handled by ISR timer.
-  simpleTimer.run();
-}
-```
 ---
 ---
 
@@ -862,7 +535,7 @@ While software timer, **programmed for 2s, is activated after more than 3.000s i
 
 ```
 Starting ISR_16_Timers_Array_Complex on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.4.0
+NRF52_MBED_TimerInterrupt v1.4.1
 [TISR] Timer = NRF_TIMER3, Timer Clock (Hz) = 1000000.00
 [TISR] Frequency = 100.00, _count = 10000
 Starting  ITimer OK, millis() = 714
@@ -1336,7 +1009,7 @@ The following is the sample terminal output when running example [**TimerInterru
 
 ```
 Starting TimerInterruptTest on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.4.0
+NRF52_MBED_TimerInterrupt v1.4.1
 [TISR] Timer = NRF_TIMER3, Timer Clock (Hz) = 1000000.00
 [TISR] Frequency = 1.00, _count = 1000000
 Starting ITimer0 OK, millis() = 1219
@@ -1366,7 +1039,7 @@ The following is the sample terminal output when running example [**Argument_Non
 
 ```
 Starting Argument_None on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.4.0
+NRF52_MBED_TimerInterrupt v1.4.1
 [TISR] Timer = NRF_TIMER4, Timer Clock (Hz) = 1000000.00
 [TISR] Frequency = 2.00, _count = 500000
 Starting ITimer0 OK, millis() = 814
@@ -1389,7 +1062,7 @@ The following is the sample terminal output when running example [FakeAnalogWrit
 
 ```
 Starting FakeAnalogWrite on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.4.0
+NRF52_MBED_TimerInterrupt v1.4.1
 [TISR] Timer = NRF_TIMER3, Timer Clock (Hz) = 1000000.00
 [TISR] Frequency = 10000.00, _count = 100
 Starting ITimer OK, millis() = 909
@@ -1494,7 +1167,7 @@ The following is the sample terminal output when running example [Change_Interva
 
 ```
 Starting Change_Interval on Nano 33 BLE
-NRF52_MBED_TimerInterrupt v1.4.0
+NRF52_MBED_TimerInterrupt v1.4.1
 [TISR] Timer = NRF_TIMER4, Timer Clock (Hz) = 1000000.00
 [TISR] Frequency = 2.00, _count = 500000
 Starting ITimer0 OK, millis() = 810
@@ -1560,14 +1233,17 @@ Submit issues to: [NRF52_MBED_TimerInterrupt issues](https://github.com/khoih-pr
 
 ## DONE
 
-1. Basic hardware timers for NRF52832 and NRF52840.
-2. More hardware-initiated software-enabled timers
-3. Longer time interval
-4. Similar features for remaining Arduino boards such as AVR, ESP32, ESP8266, STM32, SAM-DUE, SAMD21/SAMD51, nRF52, Teensy, etc.
-5. Add Table of Contents
-6. Add new **mbed_nano** to list of compatible architectures.
-7. Fix `multiple-definitions` linker error
-8. Optimize library code by using `reference-passing` instead of `value-passing`
+ 1. Basic hardware timers for NRF52832 and NRF52840.
+ 2. More hardware-initiated software-enabled timers
+ 3. Longer time interval
+ 4. Similar features for remaining Arduino boards such as AVR, ESP32, ESP8266, STM32, SAM-DUE, SAMD21/SAMD51, nRF52, Teensy, etc.
+ 5. Add Table of Contents
+ 6. Add new **mbed_nano** to list of compatible architectures.
+ 7. Fix `multiple-definitions` linker error
+ 8. Optimize library code by using `reference-passing` instead of `value-passing`
+ 9. Add support to Seeeduino nRF52840-based boards such as **SEEED_XIAO_NRF52840 and SEEED_XIAO_NRF52840_SENSE**, etc. using Seeeduino `mbed` core
+10. Add astyle using `allman` style. Restyle the library
+
 
 ---
 ---
