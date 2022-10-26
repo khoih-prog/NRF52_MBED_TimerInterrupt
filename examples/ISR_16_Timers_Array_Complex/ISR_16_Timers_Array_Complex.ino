@@ -52,15 +52,23 @@
 #include <SimpleTimer.h>              // https://github.com/jfturcot/SimpleTimer
 
 #ifndef LED_BUILTIN
-#define LED_BUILTIN       D13
+  #define LED_BUILTIN       D13
 #endif
 
-#ifndef LED_BLUE
-#define LED_BLUE          D7
+#ifndef LED_BLUE_PIN
+  #if defined(LEDB)
+    #define LED_BLUE_PIN          LEDB
+  #else
+    #define LED_BLUE_PIN          D7
+  #endif
 #endif
 
-#ifndef LED_RED
-#define LED_RED           D8
+#ifndef LED_RED_PIN
+  #if defined(LEDR)
+    #define LED_RED_PIN           LEDR
+  #else
+    #define LED_RED_PIN           D8
+  #endif
 #endif
 
 #define HW_TIMER_INTERVAL_US      10000L
@@ -293,20 +301,29 @@ void simpleTimerDoingSomething2s()
 
   unsigned long currMillis = millis();
 
-  Serial.print(F("SimpleTimer : ")); Serial.print(SIMPLE_TIMER_MS / 1000);
-  Serial.print(F(", ms : ")); Serial.print(currMillis);
-  Serial.print(F(", Dms : ")); Serial.println(currMillis - previousMillis);
+  Serial.print(F("SimpleTimer : "));
+  Serial.print(SIMPLE_TIMER_MS / 1000);
+  Serial.print(F(", ms : "));
+  Serial.print(currMillis);
+  Serial.print(F(", Dms : "));
+  Serial.println(currMillis - previousMillis);
 
   for (uint16_t i = 0; i < NUMBER_ISR_TIMERS; i++)
   {
 #if USE_COMPLEX_STRUCT
-    Serial.print(F("Timer : ")); Serial.print(i);
-    Serial.print(F(", programmed : ")); Serial.print(curISRTimerData[i].TimerInterval);
-    Serial.print(F(", actual : ")); Serial.println(curISRTimerData[i].deltaMillis);
+    Serial.print(F("Timer : "));
+    Serial.print(i);
+    Serial.print(F(", programmed : "));
+    Serial.print(curISRTimerData[i].TimerInterval);
+    Serial.print(F(", actual : "));
+    Serial.println(curISRTimerData[i].deltaMillis);
 #else
-    Serial.print(F("Timer : ")); Serial.print(i);
-    Serial.print(F(", programmed : ")); Serial.print(TimerInterval[i]);
-    Serial.print(F(", actual : ")); Serial.println(deltaMillis[i]);
+    Serial.print(F("Timer : "));
+    Serial.print(i);
+    Serial.print(F(", programmed : "));
+    Serial.print(TimerInterval[i]);
+    Serial.print(F(", actual : "));
+    Serial.println(deltaMillis[i]);
 #endif
   }
 
@@ -318,18 +335,21 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
 
   Serial.begin(115200);
-  while (!Serial);
+
+  while (!Serial && millis() < 5000);
 
   delay(100);
 
-  Serial.print(F("\nStarting ISR_16_Timers_Array_Complex on ")); Serial.println(BOARD_NAME);
+  Serial.print(F("\nStarting ISR_16_Timers_Array_Complex on "));
+  Serial.println(BOARD_NAME);
   Serial.println(NRF52_MBED_TIMER_INTERRUPT_VERSION);
 
   // Interval in microsecs
   if (ITimer.attachInterruptInterval(HW_TIMER_INTERVAL_US, TimerHandler))
   {
     startMillis = millis();
-    Serial.print(F("Starting ITimer OK, millis() = ")); Serial.println(startMillis);
+    Serial.print(F("Starting ITimer OK, millis() = "));
+    Serial.println(startMillis);
   }
   else
     Serial.println(F("Can't set ITimer. Select another freq. or interval"));

@@ -43,11 +43,19 @@
 //#endif
 
 #ifndef LED_BLUE_PIN
-  #define LED_BLUE_PIN            D7
+  #if defined(LEDB)
+    #define LED_BLUE_PIN          LEDB
+  #else
+    #define LED_BLUE_PIN          D7
+  #endif
 #endif
 
 #ifndef LED_RED_PIN
-  #define LED_RED_PIN             D8
+  #if defined(LEDR)
+    #define LED_RED_PIN           LEDR
+  #else
+    #define LED_RED_PIN           D8
+  #endif
 #endif
 
 #define TIMER0_INTERVAL_MS        1000
@@ -74,7 +82,7 @@ static bool toggle1 = false;
 NRF52_MBED_Timer ITimer0(NRF_TIMER_3);
 
 void TimerHandler0()
-{  
+{
   preMillisTimer0 = millis();
 
   //timer interrupt toggles pin LED_BUILTIN
@@ -98,20 +106,23 @@ void setup()
 {
   pinMode(LED_BUILTIN,  OUTPUT);
   pinMode(LED_BLUE_PIN, OUTPUT);
-  
+
   Serial.begin(115200);
-  while (!Serial);
-  
+
+  while (!Serial && millis() < 5000);
+
   delay(100);
-  
-  Serial.print(F("\nStarting TimerInterruptTest on ")); Serial.println(BOARD_NAME);
+
+  Serial.print(F("\nStarting TimerInterruptTest on "));
+  Serial.println(BOARD_NAME);
   Serial.println(NRF52_MBED_TIMER_INTERRUPT_VERSION);
 
   // Interval in microsecs
   if (ITimer0.attachInterruptInterval(TIMER0_INTERVAL_MS * 1000, TimerHandler0))
   {
     preMillisTimer0 = millis();
-    Serial.print(F("Starting ITimer0 OK, millis() = ")); Serial.println(preMillisTimer0);
+    Serial.print(F("Starting ITimer0 OK, millis() = "));
+    Serial.println(preMillisTimer0);
   }
   else
     Serial.println(F("Can't set ITimer0. Select another freq. or timer"));
@@ -120,7 +131,8 @@ void setup()
   if (ITimer1.attachInterruptInterval(TIMER1_INTERVAL_MS * 1000, TimerHandler1))
   {
     preMillisTimer1 = millis();
-    Serial.print(F("Starting ITimer1 OK, millis() = ")); Serial.println(preMillisTimer1);
+    Serial.print(F("Starting ITimer1 OK, millis() = "));
+    Serial.println(preMillisTimer1);
   }
   else
     Serial.println(F("Can't set ITimer1. Select another freq. or timer"));
@@ -128,12 +140,12 @@ void setup()
 
 void loop()
 {
-  static unsigned long lastTimer0   = 0; 
+  static unsigned long lastTimer0   = 0;
   static bool timer0Stopped         = false;
-  
+
   static unsigned long lastTimer1   = 0;
   static bool timer1Stopped         = false;
-  
+
 
   if (millis() - lastTimer0 > TIMER0_DURATION_MS)
   {
@@ -142,14 +154,17 @@ void loop()
     if (timer0Stopped)
     {
       preMillisTimer0 = millis();
-      Serial.print(F("Start ITimer0, millis() = ")); Serial.println(preMillisTimer0);
+      Serial.print(F("Start ITimer0, millis() = "));
+      Serial.println(preMillisTimer0);
       ITimer0.restartTimer();
     }
     else
     {
-      Serial.print(F("Stop ITimer0, millis() = ")); Serial.println(millis());
+      Serial.print(F("Stop ITimer0, millis() = "));
+      Serial.println(millis());
       ITimer0.stopTimer();
     }
+
     timer0Stopped = !timer0Stopped;
   }
 
@@ -160,15 +175,17 @@ void loop()
     if (timer1Stopped)
     {
       preMillisTimer1 = millis();
-      Serial.print(F("Start ITimer1, millis() = ")); Serial.println(preMillisTimer1);
+      Serial.print(F("Start ITimer1, millis() = "));
+      Serial.println(preMillisTimer1);
       ITimer1.restartTimer();
     }
     else
     {
-      Serial.print(F("Stop ITimer1, millis() = ")); Serial.println(millis());
+      Serial.print(F("Stop ITimer1, millis() = "));
+      Serial.println(millis());
       ITimer1.stopTimer();
     }
-    
+
     timer1Stopped = !timer1Stopped;
   }
 }

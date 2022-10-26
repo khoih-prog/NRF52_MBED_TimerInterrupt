@@ -49,7 +49,19 @@
 //#endif
 
 #ifndef LED_BLUE_PIN
-  #define LED_BLUE_PIN          D7
+  #if defined(LEDB)
+    #define LED_BLUE_PIN          LEDB
+  #else
+    #define LED_BLUE_PIN          D7
+  #endif
+#endif
+
+#ifndef LED_RED_PIN
+  #if defined(LEDR)
+    #define LED_RED_PIN           LEDR
+  #else
+    #define LED_RED_PIN           D8
+  #endif
 #endif
 
 unsigned int SWPin = D2;
@@ -76,7 +88,7 @@ unsigned int debounceCountSWPressed  = 0;
 unsigned int debounceCountSWReleased = 0;
 bool toggle0 = false;
 bool toggle1 = false;
-  
+
 void TimerHandler()
 {
   if ( (!digitalRead(SWPin)) )
@@ -139,17 +151,20 @@ void setup()
   pinMode(LED_BLUE_PIN, OUTPUT);
 
   Serial.begin(115200);
-  while (!Serial);
+
+  while (!Serial && millis() < 5000);
 
   delay(100);
 
-  Serial.print(F("\nStarting SwitchDebounce on ")); Serial.println(BOARD_NAME);
+  Serial.print(F("\nStarting SwitchDebounce on "));
+  Serial.println(BOARD_NAME);
   Serial.println(NRF52_MBED_TIMER_INTERRUPT_VERSION);
- 
+
   // Interval in microsecs
   if (ITimer.attachInterruptInterval(TIMER_INTERVAL_MS * 1000, TimerHandler))
   {
-    Serial.print(F("Starting ITimer OK, millis() = ")); Serial.println(millis());
+    Serial.print(F("Starting ITimer OK, millis() = "));
+    Serial.println(millis());
   }
   else
     Serial.println(F("Can't set ITimer. Select another freq. or timer"));
@@ -160,7 +175,7 @@ void printResult(uint32_t currTime)
   Serial.print(F("Time = "));
   Serial.print(currTime);
   Serial.print(F(", Switch = "));
-  Serial.println(SWLongPressed? F("LongPressed") : ( SWPressed? F("Pressed") : F("Released") ) );
+  Serial.println(SWLongPressed ? F("LongPressed") : ( SWPressed ? F("Pressed") : F("Released") ) );
 }
 
 #define CHECK_INTERVAL_MS     1000L

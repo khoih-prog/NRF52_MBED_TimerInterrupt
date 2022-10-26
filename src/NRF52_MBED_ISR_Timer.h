@@ -19,7 +19,7 @@
   Based on BlynkTimer.h
   Author: Volodymyr Shymanskyy
 
-  Version: 1.4.0
+  Version: 1.4.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -30,6 +30,7 @@
   1.2.1   K.Hoang      04/05/2021 Add mbed_nano to list of compatible architectures
   1.3.0   K.Hoang      09/09/2021 Don't use NRF_TIMER_1 because of mbed_nano core v2.0.0+
   1.4.0   K.Hoang      22/01/2022 Fix `multiple-definitions` linker error
+  1.4.0   K.Hoang      26/10/2022 Add support to SEEED_XIAO_NRF52840 and SEEED_XIAO_NRF52840_SENSE using mbed
 *****************************************************************************************************************************/
 
 #pragma once

@@ -19,7 +19,7 @@
   Based on BlynkTimer.h
   Author: Volodymyr Shymanskyy
 
-  Version: 1.4.0
+  Version: 1.4.1
 
   Version Modified By   Date      Comments
   ------- -----------  ---------- -----------
@@ -29,7 +29,8 @@
   1.2.0   K.Hoang      11/01/2021 Add better debug feature. Optimize code and examples to reduce RAM usage
   1.2.1   K.Hoang      04/05/2021 Add mbed_nano to list of compatible architectures
   1.3.0   K.Hoang      09/09/2021 Don't use NRF_TIMER_1 because of mbed_nano core v2.0.0+
-  1.4.0   K.Hoang      22/01/2022 Fix `multiple-definitions` linker error. Fix bug
+  1.4.0   K.Hoang      22/01/2022 Fix `multiple-definitions` linker error
+  1.4.0   K.Hoang      26/10/2022 Add support to SEEED_XIAO_NRF52840 and SEEED_XIAO_NRF52840_SENSE using mbed
 *****************************************************************************************************************************/
 /*
   nRF52 has 5 Hardware TIMERs: NRF_TIMER0-NRF_TIMER4
@@ -86,13 +87,13 @@
 #include "hal/nrf_timer.h"
 
 #ifndef NRF52_MBED_TIMER_INTERRUPT_VERSION
-  #define NRF52_MBED_TIMER_INTERRUPT_VERSION       "NRF52_MBED_TimerInterrupt v1.4.0"
+  #define NRF52_MBED_TIMER_INTERRUPT_VERSION       "NRF52_MBED_TimerInterrupt v1.4.1"
   
   #define NRF52_MBED_TIMER_INTERRUPT_VERSION_MAJOR      1
   #define NRF52_MBED_TIMER_INTERRUPT_VERSION_MINOR      4
-  #define NRF52_MBED_TIMER_INTERRUPT_VERSION_PATCH      0
+  #define NRF52_MBED_TIMER_INTERRUPT_VERSION_PATCH      1
 
-  #define NRF52_MBED_TIMER_INTERRUPT_VERSION_INT        1004000  
+  #define NRF52_MBED_TIMER_INTERRUPT_VERSION_INT        1004001
 #endif
 
 #include "TimerInterrupt_Generic_Debug.h"

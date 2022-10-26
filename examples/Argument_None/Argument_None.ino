@@ -44,11 +44,19 @@
 //#endif
 
 #ifndef LED_BLUE_PIN
-  #define LED_BLUE_PIN          D7
+  #if defined(LEDB)
+    #define LED_BLUE_PIN          LEDB
+  #else
+    #define LED_BLUE_PIN          D7
+  #endif
 #endif
 
 #ifndef LED_RED_PIN
-  #define LED_RED_PIN           D8
+  #if defined(LEDR)
+    #define LED_RED_PIN           LEDR
+  #else
+    #define LED_RED_PIN           D8
+  #endif
 #endif
 
 #define TIMER0_INTERVAL_MS        500   //1000
@@ -73,9 +81,12 @@ NRF52_MBED_Timer ITimer1(NRF_TIMER_3);
 
 void printResult(uint32_t currTime)
 {
-  Serial.print(F("Time = ")); Serial.print(currTime); 
-  Serial.print(F(", Timer0Count = ")); Serial.print(Timer0Count);
-  Serial.print(F(", Timer1Count = ")); Serial.println(Timer1Count);
+  Serial.print(F("Time = "));
+  Serial.print(currTime);
+  Serial.print(F(", Timer0Count = "));
+  Serial.print(Timer0Count);
+  Serial.print(F(", Timer1Count = "));
+  Serial.println(Timer1Count);
 }
 
 void TimerHandler0()
@@ -96,7 +107,7 @@ void TimerHandler1()
 
   // Flag for checking to be sure ISR is working as Serial.print is not OK here in ISR
   Timer1Count++;
-  
+
   //timer interrupt toggles outputPin
   digitalWrite(LED_BLUE_PIN, toggle1);
   toggle1 = !toggle1;
@@ -106,19 +117,22 @@ void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(LED_BLUE_PIN, OUTPUT);
-  
+
   Serial.begin(115200);
-  while (!Serial);
+
+  while (!Serial && millis() < 5000);
 
   delay(100);
 
-  Serial.print(F("\nStarting Argument_None on ")); Serial.println(BOARD_NAME);
+  Serial.print(F("\nStarting Argument_None on "));
+  Serial.println(BOARD_NAME);
   Serial.println(NRF52_MBED_TIMER_INTERRUPT_VERSION);
- 
+
   // Interval in microsecs
   if (ITimer0.attachInterruptInterval(TIMER0_INTERVAL_MS * 1000, TimerHandler0))
   {
-    Serial.print(F("Starting ITimer0 OK, millis() = ")); Serial.println(millis());
+    Serial.print(F("Starting ITimer0 OK, millis() = "));
+    Serial.println(millis());
   }
   else
     Serial.println(F("Can't set ITimer0. Select another freq. or timer"));
@@ -126,7 +140,8 @@ void setup()
   // Interval in microsecs
   if (ITimer1.attachInterruptInterval(TIMER1_INTERVAL_MS * 1000, TimerHandler1))
   {
-    Serial.print(F("Starting  ITimer1 OK, millis() = ")); Serial.println(millis());
+    Serial.print(F("Starting  ITimer1 OK, millis() = "));
+    Serial.println(millis());
   }
   else
     Serial.println(F("Can't set ITimer1. Select another freq. or timer"));

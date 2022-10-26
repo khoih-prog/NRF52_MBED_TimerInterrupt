@@ -26,7 +26,7 @@
 */
 
 #if !( ARDUINO_ARCH_NRF52840 && TARGET_NAME == ARDUINO_NANO33BLE )
-#error This code is designed to run on nRF52-based Nano-33-BLE boards using mbed-RTOS platform! Please check your Tools->Board setting.
+  #error This code is designed to run on nRF52-based Nano-33-BLE boards using mbed-RTOS platform! Please check your Tools->Board setting.
 #endif
 
 // These define's must be placed at the beginning before #include "NRF52TimerInterrupt.h"
@@ -44,11 +44,19 @@
 //#endif
 
 #ifndef LED_BLUE_PIN
-#define LED_BLUE_PIN          D7
+  #if defined(LEDB)
+    #define LED_BLUE_PIN          LEDB
+  #else
+    #define LED_BLUE_PIN          D7
+  #endif
 #endif
 
 #ifndef LED_RED_PIN
-#define LED_RED_PIN           D8
+  #if defined(LEDR)
+    #define LED_RED_PIN           LEDR
+  #else
+    #define LED_RED_PIN           D8
+  #endif
 #endif
 
 #define TIMER0_INTERVAL_MS        500   //1000
@@ -73,9 +81,12 @@ NRF52_MBED_Timer ITimer1(NRF_TIMER_3);
 
 void printResult(uint32_t currTime)
 {
-  Serial.print(F("Time = ")); Serial.print(currTime); 
-  Serial.print(F(", Timer0Count = ")); Serial.print(Timer0Count);
-  Serial.print(F(", Timer1Count = ")); Serial.println(Timer1Count);
+  Serial.print(F("Time = "));
+  Serial.print(currTime);
+  Serial.print(F(", Timer0Count = "));
+  Serial.print(Timer0Count);
+  Serial.print(F(", Timer1Count = "));
+  Serial.println(Timer1Count);
 }
 
 void TimerHandler0()
@@ -108,17 +119,20 @@ void setup()
   pinMode(LED_BLUE_PIN, OUTPUT);
 
   Serial.begin(115200);
-  while (!Serial);
+
+  while (!Serial && millis() < 5000);
 
   delay(100);
 
-  Serial.print(F("\nStarting Change_Interval on ")); Serial.println(BOARD_NAME);
+  Serial.print(F("\nStarting Change_Interval on "));
+  Serial.println(BOARD_NAME);
   Serial.println(NRF52_MBED_TIMER_INTERRUPT_VERSION);
 
   // Interval in microsecs
   if (ITimer0.attachInterruptInterval(TIMER0_INTERVAL_MS * 1000, TimerHandler0))
   {
-    Serial.print(F("Starting ITimer0 OK, millis() = ")); Serial.println(millis());
+    Serial.print(F("Starting ITimer0 OK, millis() = "));
+    Serial.println(millis());
   }
   else
     Serial.println(F("Can't set ITimer0. Select another freq. or timer"));
@@ -126,7 +140,8 @@ void setup()
   // Interval in microsecs
   if (ITimer1.attachInterruptInterval(TIMER1_INTERVAL_MS * 1000, TimerHandler1))
   {
-    Serial.print(F("Starting ITimer1 OK, millis() = ")); Serial.println(millis());
+    Serial.print(F("Starting ITimer1 OK, millis() = "));
+    Serial.println(millis());
   }
   else
     Serial.println(F("Can't set ITimer1. Select another freq. or timer"));
@@ -157,9 +172,11 @@ void loop()
       ITimer0.setInterval(TIMER0_INTERVAL_MS * 1000 * (multFactor + 1), TimerHandler0);
       ITimer1.setInterval(TIMER1_INTERVAL_MS * 1000 * (multFactor + 1), TimerHandler1);
 
-      Serial.print(F("Changing Interval, Timer0 = ")); Serial.print(TIMER0_INTERVAL_MS * (multFactor + 1));
-      Serial.print(F(",  Timer1 = ")); Serial.println(TIMER1_INTERVAL_MS * (multFactor + 1)); 
- 
+      Serial.print(F("Changing Interval, Timer0 = "));
+      Serial.print(TIMER0_INTERVAL_MS * (multFactor + 1));
+      Serial.print(F(",  Timer1 = "));
+      Serial.println(TIMER1_INTERVAL_MS * (multFactor + 1));
+
       lastChangeTime = currTime;
     }
   }

@@ -50,12 +50,20 @@
   #define LED_BUILTIN       D13
 #endif
 
-#ifndef LED_BLUE
-  #define LED_BLUE          D7
+#ifndef LED_BLUE_PIN
+  #if defined(LEDB)
+    #define LED_BLUE_PIN          LEDB
+  #else
+    #define LED_BLUE_PIN          D7
+  #endif
 #endif
 
-#ifndef LED_RED
-  #define LED_RED           D8
+#ifndef LED_RED_PIN
+  #if defined(LEDR)
+    #define LED_RED_PIN           LEDR
+  #else
+    #define LED_RED_PIN           D8
+  #endif
 #endif
 
 // For PWM_Value from 0-255.You can change to 1024 or 2048
@@ -65,7 +73,8 @@
 
 // You have to calibrate and update this mapping table
 float mappingTable[MAPPING_TABLE_SIZE] =
-{ 0.0,     3.281,   6.860,  10.886,  15.285,  20.355,  26.096,  32.732,  40.785,  50.180,
+{
+  0.0,     3.281,   6.860,  10.886,  15.285,  20.355,  26.096,  32.732,  40.785,  50.180,
   62.557,  79.557, 104.461, 136.075, 163.066, 181.930, 195.724, 207.132, 216.228, 223.684,
   230.395, 236.136, 241.206, 245.680, 249.781, 253.509
 };
@@ -187,18 +196,21 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
 
   Serial.begin(115200);
-  while (!Serial);
+
+  while (!Serial && millis() < 5000);
 
   delay(100);
 
-  Serial.print(F("\nStarting FakeAnalogWrite on ")); Serial.println(BOARD_NAME);
+  Serial.print(F("\nStarting FakeAnalogWrite on "));
+  Serial.println(BOARD_NAME);
   Serial.println(NRF52_MBED_TIMER_INTERRUPT_VERSION);
 
   // Interval in microsecs
   if (ITimer.attachInterruptInterval(HW_TIMER_INTERVAL_US, TimerHandler))
   {
     startMillis = millis();
-    Serial.print(F("Starting ITimer OK, millis() = ")); Serial.println(startMillis);
+    Serial.print(F("Starting ITimer OK, millis() = "));
+    Serial.println(startMillis);
   }
   else
     Serial.println(F("Can't set ITimer correctly. Select another freq. or interval"));
@@ -226,19 +238,20 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
     if ( (curISRTimerData[i].beingUsed) && (curISRTimerData[i].pin == pin) )
     {
       localValue = (value < MAX_PWM_VALUE) ? value : MAX_PWM_VALUE;
-      
+
       if (curISRTimerData[i].PWM_PremapValue == localValue)
       {
-#if (TIMER_INTERRUPT_DEBUG > 0)        
-        Serial.print(F("Ignore : Same Value for index = ")); Serial.println(i);
+#if (TIMER_INTERRUPT_DEBUG > 0)
+        Serial.print(F("Ignore : Same Value for index = "));
+        Serial.println(i);
 #endif
-        
+
         return;
       }
       else if (curISRTimerData[i].PWM_Value >= 0)
-      {     
+      {
         curISRTimerData[i].PWM_PremapValue = localValue;
-        
+
         // Mapping to corect value
         if ( ( localValue == 0) || ( localValue == MAX_PWM_VALUE - 1) )
         {
@@ -258,20 +271,25 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
           }
 
 #if (TIMER_INTERRUPT_DEBUG > 1)
-          Serial.print(F("localIndex = ")); Serial.println(localIndex);
+          Serial.print(F("localIndex = "));
+          Serial.println(localIndex);
 #endif
 
           // Can use map() function
           // Can use map() function
           curISRTimerData[i].PWM_Value = (uint16_t) ( (localIndex * 10 ) +
-                                         ( (value - mappingTable[localIndex]) * 10 ) /  (mappingTable[localIndex + 1] - mappingTable[localIndex]) );
+                                                      ( (value - mappingTable[localIndex]) * 10 ) /  (mappingTable[localIndex + 1] - mappingTable[localIndex]) );
 
 #if (TIMER_INTERRUPT_DEBUG > 0)
-          Serial.print(F("Update index = ")); Serial.print(i);
-          Serial.print(F(", pin = ")); Serial.print(pin);
-          Serial.print(F(", input PWM_Value = ")); Serial.print(value);
-          Serial.print(F(", mapped PWM_Value = ")); Serial.println(curISRTimerData[i].PWM_Value);
-#endif                           
+          Serial.print(F("Update index = "));
+          Serial.print(i);
+          Serial.print(F(", pin = "));
+          Serial.print(pin);
+          Serial.print(F(", input PWM_Value = "));
+          Serial.print(value);
+          Serial.print(F(", mapped PWM_Value = "));
+          Serial.println(curISRTimerData[i].PWM_Value);
+#endif
         }
       }
       else
@@ -316,13 +334,14 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
         }
 
 #if (TIMER_INTERRUPT_DEBUG > 1)
-        Serial.print(F("localIndex = ")); Serial.println(localIndex);
+        Serial.print(F("localIndex = "));
+        Serial.println(localIndex);
 #endif
 
         // Can use map() function
         // Can use map() function
         curISRTimerData[i].PWM_Value = (uint16_t) ( (localIndex * 10 ) +
-                                       ( (value - mappingTable[localIndex]) * 10 ) /  (mappingTable[localIndex + 1] - mappingTable[localIndex]) );
+                                                    ( (value - mappingTable[localIndex]) * 10 ) /  (mappingTable[localIndex + 1] - mappingTable[localIndex]) );
       }
 
       curISRTimerData[i].countPWM     = 0;
@@ -330,10 +349,14 @@ void fakeAnalogWrite(uint16_t pin, uint16_t value)
       pinMode(pin, OUTPUT);
 
 #if (TIMER_INTERRUPT_DEBUG > 0)
-      Serial.print(F("Add index = ")); Serial.print(i);
-      Serial.print(F(", pin = ")); Serial.print(pin);
-      Serial.print(F(", input PWM_Value = ")); Serial.print(value);
-      Serial.print(F(", mapped PWM_Value = ")); Serial.println(curISRTimerData[i].PWM_Value);
+      Serial.print(F("Add index = "));
+      Serial.print(i);
+      Serial.print(F(", pin = "));
+      Serial.print(pin);
+      Serial.print(F(", input PWM_Value = "));
+      Serial.print(value);
+      Serial.print(F(", mapped PWM_Value = "));
+      Serial.println(curISRTimerData[i].PWM_Value);
 #endif
 
       return;
@@ -360,8 +383,10 @@ void loop()
     fakeAnalogWrite(D9, i * DIVIDER);
 
 #if (TIMER_INTERRUPT_DEBUG > 0)
-    Serial.print(F("Test PWM_Value = ")); Serial.print(i * DIVIDER);
-    Serial.print(F(", max = ")); Serial.println(MAX_PWM_VALUE - 1);
+    Serial.print(F("Test PWM_Value = "));
+    Serial.print(i * DIVIDER);
+    Serial.print(F(", max = "));
+    Serial.println(MAX_PWM_VALUE - 1);
 #endif
 
     delay(DELAY_BETWEEN_CHANGE_MS);

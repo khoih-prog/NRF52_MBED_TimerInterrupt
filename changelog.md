@@ -12,6 +12,7 @@
 ## Table of Contents
 
 * [Changelog](#changelog)
+  * [Releases v1.4.1](#releases-v141)
   * [Releases v1.4.0](#releases-v140)
   * [Releases v1.3.0](#releases-v130)
   * [Releases v1.2.1](#releases-v121)
@@ -24,6 +25,12 @@
 ---
 
 ## Changelog
+
+### Releases v1.4.1
+
+1. Add support to Seeeduino nRF52840-based boards such as **SEEED_XIAO_NRF52840 and SEEED_XIAO_NRF52840_SENSE**, etc. using Seeeduino `mbed` core
+2. Add astyle using `allman` style. Restyle the library
+3. Update all examples
 
 ### Releases v1.4.0
 
